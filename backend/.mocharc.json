@@ -1,0 +1,12 @@
+{
+  "require": "tsx",
+  "extensions": [".ts"],
+  "spec": "src/**/__tests__/**/*.test.ts",
+  "watch-files": ["src/**/*.ts"],
+  "timeout": 5000,
+  "color": true,
+  "reporter": "spec",
+  "ui": "bdd",
+  "exit": true,
+  "recursive": true
+}

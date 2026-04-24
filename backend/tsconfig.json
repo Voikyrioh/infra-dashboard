@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
+    "moduleResolution": "Node",
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "paths": {
+      "@config": [
+        "./src/config/index.ts"
+      ],
+      "@logger": [
+        "./libraries/logger/index.ts"
+      ],
+      "@entities": [
+        "./src/domain/entities/index.ts"
+      ],
+      "@custom-zod": [
+        "./libraries/custom-zod-type/index.ts"
+      ],
+      "@errors/*": [
+        "./libraries/errors/*"
+      ]
+    },
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext"
+  },
+  "include": ["src/**/*", "libraries/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
