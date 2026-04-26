@@ -30,44 +30,34 @@ export function verifyInitPassword(password: string) {
 	}
 }
 
-function extractChallenge(clientDataJSONBase64url: string): string {
-	const json = Buffer.from(clientDataJSONBase64url, 'base64url').toString(
-		'utf-8',
-	)
-	const { challenge } = JSON.parse(json) as { challenge: string }
-	return challenge
-}
-
 export async function verifyPasskeyRegistration(
 	registrationResponse: RegistrationResponseJSON,
 ): Promise<{
 	registrationInfo: VerifiedRegistrationInfo
 	webauthnUserID: string
 }> {
-	const challenge = extractChallenge(
-		registrationResponse.response.clientDataJSON,
-	)
-
-	const stored = consumeChallenge(challenge)
-	if (!stored) {
-		throw new AppError('invalid-payload', 'Challenge expired or invalid')
-	}
+	let webauthnUserID: string | null = null
 
 	const result = await verifyRegistrationResponse({
 		response: registrationResponse,
-		expectedChallenge: challenge,
+		expectedChallenge: (challenge) => {
+			const stored = consumeChallenge(challenge)
+			if (!stored) return false
+			webauthnUserID = stored.webauthnUserID
+			return true
+		},
 		expectedOrigin: origin,
 		expectedRPID: rpID,
 		requireUserVerification: true,
 	})
 
-	if (!result.verified || !result.registrationInfo) {
+	if (!result.verified || !result.registrationInfo || !webauthnUserID) {
 		throw new AppError('invalid-payload', 'Passkey verification failed')
 	}
 
 	return {
 		registrationInfo: result.registrationInfo,
-		webauthnUserID: stored.webauthnUserID,
+		webauthnUserID,
 	}
 }
 
