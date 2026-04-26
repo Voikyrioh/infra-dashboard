@@ -22,8 +22,9 @@ FROM node:24-alpine AS runner
 
 # 🔨 Copy built files
 COPY --from=builder dist .
+COPY --from=builder node_modules node_modules/
 
 # 🔌 Expose the listening port of your app
 EXPOSE $PORT
 
-RUN node ./dist/index.js
+CMD ["node", "./index.js"]

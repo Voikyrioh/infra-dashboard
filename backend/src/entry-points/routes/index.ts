@@ -1,3 +1,3 @@
-import exampleRoute from './example-route'
+import exampleRoute from './auth'
 
 export { exampleRoute }
