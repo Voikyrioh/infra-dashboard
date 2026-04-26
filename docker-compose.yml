@@ -1,6 +1,6 @@
 services:
   dashboard-api:
-    build: ./backend
+    image: ghcr.io/voikyrioh/dashboard-api:${IMAGE_TAG:-latest}
     container_name: dashboard-api
     restart: unless-stopped
     environment:
@@ -15,7 +15,7 @@ services:
       - dashboard
 
   dashboard-ui:
-    build: ./frontend
+    image: ghcr.io/voikyrioh/dashboard-frontend:${IMAGE_TAG:-latest}
     container_name: dashboard-ui
     restart: unless-stopped
     depends_on:

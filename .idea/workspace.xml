@@ -4,61 +4,250 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45512227-1274-418d-b549-37b95f52ab3c" name="Changes" comment="" />
+    <list default="true" id="45512227-1274-418d-b549-37b95f52ab3c" name="Changes" comment="init project">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/database.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/libraries/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/config/params/postgres.config.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/client.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/models/account.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/models/passkey.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/resources/accounts.resource.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/resources/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/database/postgres/resources/passkeys.resource.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/repository/factory.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/repository/repositories/accounts.repository.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/data/repository/repositories/passkey.repository.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/entities/account.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/entities/init-status.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/entities/passkey.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/entities/rp.class.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/use-cases/auth/get-auth/get-auth-status.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/use-cases/auth/get-auth/get-auth-status.use-case.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/use-cases/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/domain/use-cases/use-case.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.dev.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/assets/style/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dashboard.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/build.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/build.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/compose.dev.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/libraries/custom-zod-types/application.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libraries/custom-zod-types/application.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/libraries/custom-zod-types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libraries/custom-zod-types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/libraries/errors/app.error.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libraries/errors/app.error.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/config/generate-config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/config/generate-config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/config/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/config/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/config/params/server.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/config/params/server.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/domain/entities/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/domain/entities/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/entry-points/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/entry-points/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/entry-points/routes/example-route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/entry-points/routes/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/entry-points/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/entry-points/routes/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="4" />
+    <option name="cachedIndexableFilesCount" value="148" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Voikyrioh&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:Voikyrioh/infra-dashboard.git&quot;,
+    &quot;accountId&quot;: &quot;d130364d-84bf-425d-b201-ba2cd3ef28e6&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3CoWcc4XHMJkdxSwsNLw1AX6IKY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "master",
-    "javascript.preferred.runtime.type.id": "node",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "terminal",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.backend/Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.dev.yml.backend: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.dev.yml.database: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.dev.yml.frontend: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.dev.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.frontend/Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Lab/dashboard/backend/src/config/params&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.format.executor&quot;: &quot;Run&quot;,
+    &quot;npm.migrate:db.executor&quot;: &quot;Run&quot;,
+    &quot;npm.migrate:db:down.executor&quot;: &quot;Run&quot;,
+    &quot;npm.preview.executor&quot;: &quot;Run&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Lab\\dashboard\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ]
   }
-}]]></component>
+}</component>
+  <component name="RecapSpentCounter">
+    <option name="endsOfQuotaMs" value="1779141612795" />
+    <option name="spentUsd" value="0.25739217" />
+  </component>
+  <component name="RecapUselessUpdatesCounter">
+    <option name="suspendCountdown" value="0" />
+  </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Lab\dashboard\backend\src\config\params" />
+      <recent name="C:\Lab\dashboard\backend\src\domain\use-cases" />
+      <recent name="C:\Lab\dashboard\backend" />
+      <recent name="C:\Lab\dashboard\backend\libraries\custom-zod-types" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Lab\dashboard\.idea" />
+      <recent name="C:\Lab\dashboard\backend\src\domain\use-cases\auth\get-auth" />
+      <recent name="C:\Lab\dashboard\backend\src\data\database\postgres" />
+      <recent name="C:\Lab\dashboard\backend\src\data\database" />
+      <recent name="C:\Lab\dashboard\backend\src\domain\use-cases" />
       <recent name="C:\Lab\dashboard" />
     </key>
+  </component>
+  <component name="RunManager" selected="npm.migrate:db">
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.dev.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="sourceFilePath" value="docker-compose.dev.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.dev.yml.backend: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="backend" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.dev.yml" />
+          <option name="upForceRecreate" value="true" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.dev.yml.frontend: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="frontend" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.dev.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="migrate:db" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/backend/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="migrate:db" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="migrate:db:down" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/backend/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="migrate:db:down" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.migrate:db" />
+        <item itemvalue="Docker.docker-compose.dev.yml: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.dev.yml.backend: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.dev.yml.frontend: Compose Deployment" />
+        <item itemvalue="npm.migrate:db:down" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-WS-261.22158.274" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.32098.39" />
       </set>
     </attachedChunks>
   </component>
@@ -69,11 +258,49 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1777052483264</updated>
-      <workItem from="1777052484295" duration="1092000" />
+      <workItem from="1777052484295" duration="5196000" />
+      <workItem from="1777068113500" duration="36000" />
+      <workItem from="1777068652300" duration="262000" />
+      <workItem from="1777110231445" duration="7166000" />
+      <workItem from="1777123049701" duration="174000" />
+      <workItem from="1777123359239" duration="207000" />
+      <workItem from="1777123580674" duration="81000" />
+      <workItem from="1777123669977" duration="58000" />
+      <workItem from="1777123740927" duration="45000" />
+      <workItem from="1777123787302" duration="25000" />
+      <workItem from="1777123820810" duration="78000" />
+      <workItem from="1777123902664" duration="66000" />
+      <workItem from="1777124148116" duration="10000" />
+      <workItem from="1777124268056" duration="129000" />
+      <workItem from="1777124397961" duration="25000" />
+      <workItem from="1777124431954" duration="295000" />
+      <workItem from="1777124736269" duration="104000" />
+      <workItem from="1777124849628" duration="22000" />
+      <workItem from="1777124889526" duration="59000" />
+      <workItem from="1777125959954" duration="10164000" />
+      <workItem from="1777137674666" duration="9804000" />
+      <workItem from="1777195530073" duration="9273000" />
+      <workItem from="1777219650260" duration="10684000" />
     </task>
+    <task id="LOCAL-00001" summary="init project">
+      <option name="closed" value="true" />
+      <created>1777053663874</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1777053663874</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.env" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="init project" />
+    <option name="LAST_COMMIT_MESSAGE" value="init project" />
   </component>
 </project>
