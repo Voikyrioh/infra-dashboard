@@ -1,3 +1,2 @@
-import { application } from './application'
-
-export const customZod = { application }
+export { application } from './application'
+export { customValidator } from './validator'

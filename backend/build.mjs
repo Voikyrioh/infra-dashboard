@@ -1,10 +1,10 @@
-import * as esbuild from 'esbuild';
+import * as esbuild from 'esbuild'
 
 await esbuild.build({
 	entryPoints: ['src/index.ts'],
 	bundle: true,
 	platform: 'node',
-	target: 'node22',
+	target: 'node24',
 	format: 'esm',
 	outfile: 'dist/index.js',
 	packages: 'external',
@@ -16,6 +16,6 @@ await esbuild.build({
 		'@custom-zod': './libraries/custom-zod-types/index.ts',
 		'@errors': './libraries/errors',
 	},
-});
+})
 
-console.log('Build complete → dist/index.js');
+console.log('Build complete → dist/index.js')

@@ -1,0 +1,16 @@
+{
+	"production": {
+		"driver": "postgres",
+		"host": { "ENV": "PG_HOST" },
+		"user": { "ENV": "PG_USER" },
+		"password": { "ENV": "PG_PASSWORD" },
+		"database": { "ENV": "PG_DATABASE" },
+		"port": { "ENV": "PG_PORT" }
+	},
+	"dev": {
+		"driver": "postgres",
+		"user": "user",
+		"password": "password",
+		"database": "dashboard"
+	}
+}

@@ -1,31 +1,40 @@
-import Logger from '@logger'
-import { type ServerType, serve } from '@hono/node-server'
-import app from './entry-points/app'
 import process from 'node:process'
-import config from "@config";
+import config from '@config'
+import { type ServerType, serve } from '@hono/node-server'
+import Logger from '@logger'
+import logger from '@logger'
+import { client } from './data/database/postgres'
+import app from './entry-points/app'
 
-let index: ServerType;
+let server: ServerType
 function graceFullStart() {
-    return serve(
-        {
-            fetch: app.fetch,
-            hostname: config.Server.Host,
-            port: config.Server.Port,
-        },
-        (info) => {
-            Logger.info('======== Server started ========')
-            Logger.info(`Server is running on https://${ info.address }${info.port ? `:${ info.port }` : ''}`)
-            Logger.info(`================================`)
-        },
-    )
+	client.test().catch((e) => {
+		logger.error(e)
+		graceFullStop(1)
+	})
+	return serve(
+		{
+			fetch: app.fetch,
+			hostname: config.Server.Host,
+			port: config.Server.Port,
+		},
+		(info) => {
+			Logger.info('======== Server started ========')
+			Logger.info(
+				`Server is running on https://${info.address}${info.port ? `:${info.port}` : ''}`,
+			)
+			Logger.info(`================================`)
+		},
+	)
 }
 
 function graceFullStop(errorCode: number) {
-    index?.close((err) => {
-        console.log(err);
-        Logger.info('======== Server stopped ========')
-        process.exit(errorCode)
-    })
+	server?.close((err) => {
+		console.log(err)
+		Logger.info('======== Server stopped ========')
+		process.exit(errorCode)
+	})
 }
-index = graceFullStart()
+
+server = graceFullStart()
 process.on('SIGINT', graceFullStop)
