@@ -23,6 +23,9 @@
 	--color-error: #f85149;
 	--color-error-dim: rgba(248, 81, 73, 0.15);
 
+	--color-amber: #f59e0b;
+	--color-amber-dim: rgba(245, 158, 11, 0.15);
+
 	--shadow-neon-emerald:
 		0 0 12px rgba(16, 185, 129, 0.4), 0 0 40px rgba(16, 185, 129, 0.15);
 	--shadow-neon-navy:
@@ -79,6 +82,9 @@
 
 	--color-error: #cf222e;
 	--color-error-dim: rgba(207, 34, 46, 0.1);
+
+	--color-amber: #d97706;
+	--color-amber-dim: rgba(217, 119, 6, 0.1);
 
 	--shadow-neon-emerald:
 		0 0 8px rgba(5, 150, 105, 0.3), 0 0 24px rgba(5, 150, 105, 0.1);
