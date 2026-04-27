@@ -8,7 +8,7 @@ describe('get-history service', () => {
 				status: 'success',
 				data: {
 					resultType: 'matrix',
-					result: [{ metric: {}, values: [[1714220000, '42.3'], [1714220060, '45.1']] }],
+					result: [{ metric: {}, values: [[1714220000, '42.3'], [1714220060, '45.1']] as [number, string][] }],
 				},
 			}
 			const points = parseVictoriaResponse(vmResponse)
