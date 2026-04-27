@@ -1,9 +1,9 @@
 import { customZod } from '@libraries'
-import type { RegistrationResponseJSON } from '@simplewebauthn/server'
+import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server'
 import { Hono } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
-import { GetAuthStatus, InitFirstAuth } from '../../domain/use-cases'
+import { GetAuthStatus, GetChallenge, InitFirstAuth, VerifyAuth } from '../../domain/use-cases'
 
 const registrationResponseSchema = z.object({
 	id: z.base64url(),
@@ -54,5 +54,44 @@ authRoute.delete('/', async (c) => {
 	deleteCookie(c, 'jwt', { path: '/' })
 	return c.json({ success: true })
 })
+
+authRoute.get('challenge', async (c) => {
+	return c.json(await GetChallenge.Execute())
+})
+
+const authenticationResponseSchema = z.object({
+	id: z.base64url(),
+	rawId: z.base64url(),
+	type: z.literal('public-key'),
+	response: z.object({
+		clientDataJSON: z.base64url(),
+		authenticatorData: z.base64url(),
+		signature: z.base64url(),
+		userHandle: z.base64url().optional(),
+	}),
+	clientExtensionResults: z.record(z.string(), z.unknown()).optional(),
+})
+
+const verifyAuthSchema = z.object({
+	authenticationResponse: authenticationResponseSchema,
+})
+
+authRoute.post(
+	'/verify',
+	customZod.customValidator('json', verifyAuthSchema),
+	async (c) => {
+		const { authenticationResponse } = c.req.valid('json')
+		const { token } = await VerifyAuth.Execute(
+			authenticationResponse as AuthenticationResponseJSON,
+		)
+		setCookie(c, 'jwt', token, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+			path: '/',
+		})
+		return c.json({ success: true })
+	},
+)
 
 export default authRoute

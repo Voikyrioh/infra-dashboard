@@ -1,2 +1,4 @@
 export { GetAuthStatus } from './auth/get-auth/get-auth-status.use-case'
+export { GetChallenge } from './auth/get-challenge/get-challenge.use-case'
 export { InitFirstAuth } from './auth/init-first-auth/init-first-auth.use-case'
+export { VerifyAuth } from './auth/verify-auth/verify-auth.use-case'

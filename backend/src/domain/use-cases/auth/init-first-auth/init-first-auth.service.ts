@@ -81,5 +81,6 @@ export async function generateToken(accountId: string) {
 	return sign(
 		{ sub: accountId, role: 'owner', iat: now, exp },
 		Config.Server.SigningKey,
+		'HS256',
 	)
 }
