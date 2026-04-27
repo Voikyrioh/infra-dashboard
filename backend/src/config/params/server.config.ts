@@ -6,10 +6,10 @@ export default {
 		name: 'CLIENT_URLS',
 		description: 'List of client urls',
 		default: {
-			_: ['http://localhost:5173'],
+			_: 'http://localhost:5173',
 		},
 		validator: z.preprocess(
-			(val) => z.string().parse(val).split(','),
+			(val) => (Array.isArray(val) ? val : z.string().parse(val).split(',')),
 			z.array(z.string()),
 		),
 	},

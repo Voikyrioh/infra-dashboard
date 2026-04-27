@@ -1,4 +1,5 @@
 import http from 'node:http'
+import Config from '@config'
 
 interface DockerContainerStats {
 	cpu_stats: {
@@ -34,6 +35,10 @@ function dockerGet<T>(socketPath: string, path: string): Promise<T> {
 				const chunks: Buffer[] = []
 				res.on('data', (chunk) => chunks.push(chunk))
 				res.on('end', () => {
+					if (res.statusCode && res.statusCode >= 400) {
+						reject(new Error(`Docker API error ${res.statusCode} on ${path}`))
+						return
+					}
 					try {
 						resolve(JSON.parse(Buffer.concat(chunks).toString()))
 					} catch (e) {
@@ -62,11 +67,10 @@ export function calcRamMb(stats: DockerContainerStats): number {
 		stats.memory_stats.stats?.inactive_file ??
 		stats.memory_stats.stats?.cache ??
 		0
-	return Math.round((stats.memory_stats.usage - cache) / 1024 / 1024)
+	return Math.round(Math.max(0, stats.memory_stats.usage - cache) / 1024 / 1024)
 }
 
 export async function fetchLiveMetrics(): Promise<LiveMetrics> {
-	const { default: Config } = await import('@config')
 	const socketPath = Config.Server.DockerSocket
 
 	const [info, containers] = await Promise.all([
