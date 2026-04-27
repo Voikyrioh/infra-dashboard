@@ -68,11 +68,6 @@ async function handleLogin() {
 function retryLogin() {
 	login.setState("login");
 }
-
-function retrySetup() {
-	login.password = "";
-	login.setState("setup");
-}
 </script>
 
 <template>
@@ -169,9 +164,6 @@ function retrySetup() {
 					<p class="login-page__error-msg">{{ login.errorMessage }}</p>
 					<AppButton variant="secondary" class="login-page__submit" @click="retryLogin">
 						Réessayer la connexion
-					</AppButton>
-					<AppButton variant="ghost" class="login-page__submit" @click="retrySetup">
-						Reconfigurer la passkey
 					</AppButton>
 				</div>
 			</AuthCard>
