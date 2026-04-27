@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import { logout as apiLogout } from "@/services/auth.service";
 import { useTheme } from "@/libraries/theme";
 import { useAuthStore } from "@/stores/auth";
 
@@ -7,7 +8,8 @@ const auth = useAuthStore();
 const router = useRouter();
 const { isDark, toggle } = useTheme();
 
-function logout() {
+async function logout() {
+	await apiLogout();
 	auth.clearAuth();
 	router.push("/connexion");
 }

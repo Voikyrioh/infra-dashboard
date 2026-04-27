@@ -22,13 +22,15 @@ onMounted(async () => {
 	login.reset();
 	try {
 		const response = await checkAuthStatus();
+		if (response.status === "connected") {
+			auth.setAuthenticated(true);
+			router.push("/dashboard");
+			return;
+		}
 		if (response.passkeyOptions) {
 			login.setPasskeyOptions(response.passkeyOptions);
 		}
-		const mapped =
-			response.status === "need-first-auth"
-				? "setup"
-				: "login";
+		const mapped = response.status === "need-first-auth" ? "setup" : "login";
 		login.setState(mapped);
 	} catch {
 		login.setError("Impossible de joindre le serveur.");
@@ -40,8 +42,8 @@ async function handleSetup() {
 	login.setState("creating-passkey");
 	try {
 		const credential = await startRegistration({ optionsJSON: login.passkeyOptions });
-		const { token } = await initFirstAuth(login.password, credential);
-		auth.setAuth(token);
+		await initFirstAuth(login.password, credential);
+		auth.setAuthenticated(true);
 		router.push("/dashboard");
 	} catch (err) {
 		const message =
@@ -54,9 +56,9 @@ async function handleLogin() {
 	login.setState("authenticating");
 	try {
 		const options = await getLoginChallenge();
-		const credential = await startAuthentication({ optionsJSON: options as PublicKeyCredentialRequestOptionsJSON });
-		const { token } = await verifyPasskey(credential);
-		auth.setAuth(token);
+		const credential = await startAuthentication({ optionsJSON: options });
+		await verifyPasskey(credential);
+		auth.setAuthenticated(true);
 		router.push("/dashboard");
 	} catch (err) {
 		const message =

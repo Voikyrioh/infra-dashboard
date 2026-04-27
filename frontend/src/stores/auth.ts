@@ -1,18 +1,16 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 export const useAuthStore = defineStore("auth", () => {
-	const authKey = ref<string | null>(null);
+  const isAuthenticated = ref(false);
 
-	const isAuthenticated = computed(() => authKey.value !== null);
+  function setAuthenticated(value: boolean) {
+    isAuthenticated.value = value;
+  }
 
-	function setAuth(key: string) {
-		authKey.value = key;
-	}
+  function clearAuth() {
+    isAuthenticated.value = false;
+  }
 
-	function clearAuth() {
-		authKey.value = null;
-	}
-
-	return { authKey, isAuthenticated, setAuth, clearAuth };
+  return { isAuthenticated, setAuthenticated, clearAuth };
 });
