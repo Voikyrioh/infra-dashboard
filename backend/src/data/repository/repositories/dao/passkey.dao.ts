@@ -6,15 +6,16 @@ import type { PasskeyModel } from '../../../database/postgres/models/passkey.mod
 export const assertAndCoercePasskeyModelToEntity = (
 	passkey: PasskeyModel,
 ): PasskeyEntity => {
+	const publicKeyBuffer = passkey.public_key as Buffer
 	const entityParse = PasskeySchema.safeParse({
-		id: passkey.id,
-		publicKey: passkey.public_key,
-		user: passkey.account_id,
-		webauthnUserId: passkey.webauthn_user_id,
-		counter: passkey.counter,
-		deviceType: 'singleDevice',
+		credentialId: passkey.credential_id,
+		publicKey: Array.from(publicKeyBuffer).map((b) => (b > 127 ? b - 256 : b)),
+		accountId: passkey.account_id,
+		webauthnUserID: passkey.webauthn_user_id,
+		counter: BigInt(passkey.counter),
+		deviceType: passkey.backed_eligible ? 'multiDevice' : 'singleDevice',
 		backedUp: passkey.backed_up,
-		transports: passkey.transports.replace(/[[\]']/g, '').split('|'),
+		transports: passkey.transports.split('|').filter(Boolean),
 	})
 
 	if (!entityParse.success) {

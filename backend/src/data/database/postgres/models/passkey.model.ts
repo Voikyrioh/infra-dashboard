@@ -1,5 +1,6 @@
 export type PasskeyModel = {
 	id: string
+	credential_id: string | null
 	public_key: Buffer | string
 	account_id: string
 	webauthn_user_id: string

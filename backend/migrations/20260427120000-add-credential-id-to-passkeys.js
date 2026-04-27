@@ -4,7 +4,6 @@ exports.up = function (db) {
 	return db.addColumn('passkeys', 'credential_id', {
 		type: 'text',
 		notNull: false,
-		defaultValue: null,
 	})
 }
 
