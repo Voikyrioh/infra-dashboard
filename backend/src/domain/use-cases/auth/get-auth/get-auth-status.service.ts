@@ -1,5 +1,7 @@
+import Config from '@config'
 import type { AccountEntity, PasskeyEntity } from '@entities'
 import { generateRegistrationOptions } from '@simplewebauthn/server'
+import { verify } from 'hono/jwt'
 import { repository } from '../../../../data/repository/factory'
 import type { InitStatus } from '../../../entities/init-status.model'
 import { rpID, rpName } from '../../../entities/rp.class'
@@ -11,7 +13,16 @@ export async function getOwner() {
 
 export function parseStatus(passkey: PasskeyEntity | undefined): InitStatus {
 	if (!passkey) return 'need-first-auth'
-	else return 'need-auth'
+	return 'need-auth'
+}
+
+export async function checkJwtCookie(token: string): Promise<boolean> {
+	try {
+		await verify(token, Config.Server.SigningKey, 'HS256')
+		return true
+	} catch {
+		return false
+	}
 }
 
 export async function getPasskeyCreationOptions(account: AccountEntity) {

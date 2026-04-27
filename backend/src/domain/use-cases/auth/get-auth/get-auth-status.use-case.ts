@@ -1,6 +1,7 @@
 import type { InitStatus } from '@entities'
 import { UseCase } from '../../use-case'
 import {
+	checkJwtCookie,
 	getOwner,
 	getPasskeyCreationOptions,
 	parseStatus,
@@ -10,7 +11,15 @@ class GetAuthStatusUseCase extends UseCase<{
 	status: InitStatus
 	passkeyOptions?: PublicKeyCredentialCreationOptionsJSON
 }> {
-	async Execute() {
+	async Execute(jwtCookie?: string) {
+		if (jwtCookie) {
+			const isValid = await this.runStep(
+				'Check JWT cookie',
+				checkJwtCookie.bind(this, jwtCookie),
+			)
+			if (isValid) return { status: 'connected' as const }
+		}
+
 		const { account, passkey } = await this.runStep(
 			'Get Owner',
 			getOwner.bind(this),
@@ -31,4 +40,5 @@ class GetAuthStatusUseCase extends UseCase<{
 		return { status }
 	}
 }
+
 export const GetAuthStatus = new GetAuthStatusUseCase()

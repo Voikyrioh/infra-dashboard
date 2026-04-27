@@ -1,6 +1,7 @@
 import { customZod } from '@libraries'
 import type { RegistrationResponseJSON } from '@simplewebauthn/server'
 import { Hono } from 'hono'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
 import { GetAuthStatus, InitFirstAuth } from '../../domain/use-cases'
 
@@ -24,7 +25,8 @@ const initFirstAuthSchema = z.object({
 const authRoute = new Hono().basePath('/auth')
 
 authRoute.get('status', async (c) => {
-	return c.json(await GetAuthStatus.Execute())
+	const jwtCookie = getCookie(c, 'jwt')
+	return c.json(await GetAuthStatus.Execute(jwtCookie))
 })
 
 authRoute.put(
@@ -33,10 +35,24 @@ authRoute.put(
 	async (c) => {
 		const { password, registrationResponse } = c.req.valid('json')
 		const ip = c.req.header('x-forwarded-for') ?? c.req.header('x-real-ip') ?? 'unknown'
-		return c.json(
-			await InitFirstAuth.Execute(password, registrationResponse as RegistrationResponseJSON, ip),
+		const { token } = await InitFirstAuth.Execute(
+			password,
+			registrationResponse as RegistrationResponseJSON,
+			ip,
 		)
+		setCookie(c, 'jwt', token, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+			path: '/',
+		})
+		return c.json({ success: true })
 	},
 )
+
+authRoute.delete('/', async (c) => {
+	deleteCookie(c, 'jwt', { path: '/' })
+	return c.json({ success: true })
+})
 
 export default authRoute
