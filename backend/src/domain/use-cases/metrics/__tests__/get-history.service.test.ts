@@ -1,5 +1,6 @@
 import { expect } from 'chai'
-import { parseVictoriaResponse } from '../get-history/get-history.service'
+import Config from '@config'
+import { parseVictoriaResponse, fetchHistory } from '../get-history/get-history.service'
 
 describe('get-history service', () => {
 	describe('parseVictoriaResponse', () => {
@@ -21,6 +22,24 @@ describe('get-history service', () => {
 		it('retourne [] si result est vide', () => {
 			const vmResponse = { status: 'success', data: { resultType: 'matrix', result: [] } }
 			expect(parseVictoriaResponse(vmResponse)).to.deep.equal([])
+		})
+	})
+
+	describe('fetchHistory', () => {
+		let originalUrl: string | null
+
+		beforeEach(() => {
+			originalUrl = Config.Server.VictoriaMetricsUrl
+		})
+
+		afterEach(() => {
+			Config.Server.VictoriaMetricsUrl = originalUrl
+		})
+
+		it('returns empty when VictoriaMetricsUrl is not configured', async () => {
+			Config.Server.VictoriaMetricsUrl = null
+			const result = await fetchHistory('1h')
+			expect(result).to.deep.equal({ cpu: [], ram: [] })
 		})
 	})
 })
