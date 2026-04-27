@@ -85,4 +85,44 @@ export default {
 		},
 		validator: z.string().min(8),
 	},
+	DockerSocket: {
+		name: 'DOCKER_SOCKET',
+		description: 'Path to Docker Unix socket',
+		default: {
+			_: '/var/run/docker.sock',
+		},
+		validator: z.string().min(1),
+	},
+	VictoriaMetricsUrl: {
+		name: 'VICTORIA_METRICS_URL',
+		description: 'Victoria Metrics base URL',
+		default: {
+			_: null,
+		},
+		validator: z.string().url().nullish().default(null),
+	},
+	CfApiToken: {
+		name: 'CF_API_TOKEN',
+		description: 'Cloudflare API token',
+		default: {
+			_: null,
+		},
+		validator: z.string().nullish().default(null),
+	},
+	CfZoneId: {
+		name: 'CF_ZONE_ID',
+		description: 'Cloudflare Zone ID',
+		default: {
+			_: null,
+		},
+		validator: z.string().nullish().default(null),
+	},
+	LokiUrl: {
+		name: 'LOKI_URL',
+		description: 'Loki base URL',
+		default: {
+			_: null,
+		},
+		validator: z.string().url().nullish().default(null),
+	},
 }

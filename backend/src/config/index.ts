@@ -15,6 +15,11 @@ export default {
 			PublicKey: string
 			JwtExpiresMs: number
 			InitPassword: string
+			DockerSocket: string
+			VictoriaMetricsUrl: string | null
+			CfApiToken: string | null
+			CfZoneId: string | null
+			LokiUrl: string | null
 		}
 	>(ServerConfig),
 	Postgres: generateConfig<
