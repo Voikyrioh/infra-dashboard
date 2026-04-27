@@ -47,3 +47,6 @@ coverage/
 
 # Docker volumes (local development)
 dashboard-data/
+
+# Visual companion brainstorming sessions
+.superpowers/
