@@ -1,3 +1,5 @@
 export * from './account'
 export * from './init-status.model'
 export * from './passkey'
+export * from './app'
+export * from './predefined-tag'

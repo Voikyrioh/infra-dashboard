@@ -20,6 +20,8 @@ export default {
 			CfApiToken: string | null
 			CfZoneId: string | null
 			LokiUrl: string | null
+			GitHubToken: string | null
+			GitHubOwner: string
 		}
 	>(ServerConfig),
 	Postgres: generateConfig<

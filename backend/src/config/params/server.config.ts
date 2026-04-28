@@ -125,4 +125,20 @@ export default {
 		},
 		validator: z.string().url().nullish().default(null),
 	},
+	GitHubToken: {
+		name: 'GITHUB_TOKEN',
+		description: 'GitHub Personal Access Token (scope repo, lecture)',
+		default: {
+			_: null,
+		},
+		validator: z.string().nullish().default(null),
+	},
+	GitHubOwner: {
+		name: 'GITHUB_OWNER',
+		description: 'GitHub owner username',
+		default: {
+			_: 'voikyrioh',
+		},
+		validator: z.string().min(1),
+	},
 }
