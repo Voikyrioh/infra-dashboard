@@ -5,6 +5,8 @@ import { cors } from 'hono/cors'
 import authRoute from './routes/auth'
 import metricsRoute from './routes/metrics'
 import visitsRoute from './routes/visits'
+import appsRoute from './routes/apps'
+import tagsRoute from './routes/tags'
 
 const app = new Hono().basePath('/api/v1')
 
@@ -14,5 +16,7 @@ app.onError(handleHttpErrors)
 app.route('/', authRoute)
 app.route('/', metricsRoute)
 app.route('/', visitsRoute)
+app.route('/', appsRoute)
+app.route('/', tagsRoute)
 
 export default app
