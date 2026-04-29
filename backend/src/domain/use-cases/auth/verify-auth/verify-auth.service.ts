@@ -30,6 +30,7 @@ export async function verifyPasskeyAuth(
 			counter: Number(passkey.counter),
 			transports: passkey.transports as AuthenticatorTransportFuture[],
 		},
+		requireUserVerification: false,
 	})
 
 	if (!result.verified) {
