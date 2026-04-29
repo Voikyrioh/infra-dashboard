@@ -3,8 +3,8 @@
 #
 # Before using:
 #   1. Replace <app-name> with your app's name (e.g. my-app)
-#   2. Replace <port> with the container's internal port
-#   3. Set GitHub secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_PORT, SSH_USER, SSH_HOST_FINGERPRINT
+#   2. Set GitHub secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_PORT, SSH_USER, SSH_HOST_FINGERPRINT
+#      SSH_HOST_FINGERPRINT: run `ssh-keyscan -p <port> <host>` and paste the output line
 #   4. Create /opt/infra/apps/<app-name>/.env on the VPS with IMAGE_TAG=latest
 #   5. Create /opt/infra/apps/<app-name>/docker-compose.yml on the VPS
 
