@@ -1,0 +1,92 @@
+# Template: copy to .github/workflows/build-deploy.yml in your app repo.
+# The dashboard detects repositories containing this file via GitHub Search API.
+#
+# Before using:
+#   1. Replace <app-name> with your app's name (e.g. my-app)
+#   2. Replace <port> with the container's internal port
+#   3. Set GitHub secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_PORT, SSH_USER, SSH_HOST_FINGERPRINT
+#   4. Create /opt/infra/apps/<app-name>/.env on the VPS with IMAGE_TAG=latest
+#   5. Create /opt/infra/apps/<app-name>/docker-compose.yml on the VPS
+
+name: Build & Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Version tag (ex: v1.0.0)"
+        required: true
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+    steps:
+      - name: Validate tag format
+        run: |
+          if ! echo "${{ inputs.tag }}" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Error: tag must match vX.Y.Z (e.g. v1.0.0)"
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - name: Create GitHub release
+        run: |
+          gh release create "${{ inputs.tag }}" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="${{ github.event.repository.name }} ${{ inputs.tag }}" \
+            --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish_image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/<app-name>:${{ inputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/<app-name>:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: [create_release, publish_image]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_HOST_FINGERPRINT }}" >> ~/.ssh/known_hosts
+      - name: Deploy to VPS
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /opt/infra/apps/<app-name>
+            grep -q '^IMAGE_TAG=' .env && \
+              sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ inputs.tag }}/" .env || \
+              echo "IMAGE_TAG=${{ inputs.tag }}" >> .env
+            docker compose pull
+            docker compose up -d --remove-orphans
+          EOF
+      - name: Cleanup SSH
+        if: always()
+        run: rm -rf ~/.ssh
