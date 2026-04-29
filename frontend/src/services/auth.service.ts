@@ -30,8 +30,8 @@ export async function initFirstAuth(
     body: JSON.stringify({ password, registrationResponse }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message ?? "Erreur lors de la configuration.");
+    const body = await res.text().catch(() => "");
+    throw new Error(body || "Erreur lors de la configuration.");
   }
 }
 
@@ -50,8 +50,8 @@ export async function verifyPasskey(
     body: JSON.stringify({ authenticationResponse }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message ?? "Authentification échouée.");
+    const body = await res.text().catch(() => "");
+    throw new Error(body || "Authentification échouée.");
   }
 }
 
