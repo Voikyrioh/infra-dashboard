@@ -1,22 +1,31 @@
 services:
   dashboard-api:
     image: ghcr.io/voikyrioh/dashboard-api:${IMAGE_TAG:-latest}
-    container_name: dashboard-api
+    container_name: dashboard_api
     restart: unless-stopped
     environment:
+      - PRIVATE_KEY=/data/ssl/id_rsa
+      - PUBLIC_KEY=/data/ssl/id_rsa.pub
+      - JWT_EXPIRATION_TIME_MS=${JWT_EXPIRATION_TIME_MS:-3600000}
+      - INIT_PASSWORD=${INIT_PASSWORD}
+      - CLIENT_URLS=https://dashboard.voikyrioh.fr
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - RP_ID=${RP_ID}
-      - ORIGIN=${ORIGIN}
-      - DATA_DIR=/data
+      - PG_HOST=shared_postgres
+      - PG_PORT=5432
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DATABASE=dashboard
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - dashboard-data:/data
+      - /opt/dashboard/ssl:/data/ssl:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - dashboard
+      - postgres
 
   dashboard-ui:
     image: ghcr.io/voikyrioh/dashboard-frontend:${IMAGE_TAG:-latest}
-    container_name: dashboard-ui
+    container_name: dashboard_ui
     restart: unless-stopped
     depends_on:
       - dashboard-api
@@ -36,6 +45,8 @@ networks:
   dashboard:
     internal: true
   proxy:
+    external: true
+  postgres:
     external: true
 
 volumes:
