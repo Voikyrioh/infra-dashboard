@@ -48,7 +48,7 @@ export async function verifyPasskeyRegistration(
 		},
 		expectedOrigin: origin,
 		expectedRPID: rpID,
-		requireUserVerification: true,
+		requireUserVerification: false,
 	})
 
 	if (!result.verified || !result.registrationInfo || !webauthnUserID) {
