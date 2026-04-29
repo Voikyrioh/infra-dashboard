@@ -4,6 +4,8 @@ services:
     container_name: dashboard_api
     restart: unless-stopped
     environment:
+      - NODE_ENV=production
+      - PORT=8080
       - PRIVATE_KEY=/data/ssl/id_rsa
       - PUBLIC_KEY=/data/ssl/id_rsa.pub
       - JWT_EXPIRATION_TIME_MS=${JWT_EXPIRATION_TIME_MS:-3600000}
@@ -14,7 +16,7 @@ services:
       - PG_PORT=5432
       - PG_USER=${PG_USER}
       - PG_PASSWORD=${PG_PASSWORD}
-      - PG_DATABASE=dashboard
+      - PG_DATABASE=${PG_DATABASE:-dashboard}
     volumes:
       - dashboard-data:/data
       - /opt/dashboard/ssl:/data/ssl:ro
