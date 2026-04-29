@@ -29,7 +29,7 @@ export default {
 			_: '127.0.0.1',
 			production: '0.0.0.0',
 		},
-		validator: z.ipv4(),
+		validator: z.string().min(1),
 	},
 	LogFile: {
 		name: 'LOG_FILE',
