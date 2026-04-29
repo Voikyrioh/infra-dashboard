@@ -6,6 +6,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=8080
+      - HOSTNAME=0.0.0.0
       - RP_ID=dashboard.voikyrioh.fr
       - PRIVATE_KEY=/data/ssl/id_rsa
       - PUBLIC_KEY=/data/ssl/id_rsa.pub
