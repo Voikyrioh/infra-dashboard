@@ -1,0 +1,35 @@
+name: Migrate DB
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to run migrations from (ex: v1.0.0)"
+        required: false
+        default: "latest"
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_HOST_FINGERPRINT }}" >> ~/.ssh/known_hosts
+
+      - name: Run migrations
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            docker run --rm \
+              --network postgres \
+              --env-file /opt/infra/apps/dashboard/.env \
+              -e NODE_ENV=production \
+              ghcr.io/voikyrioh/dashboard-api:${{ inputs.tag }} \
+              node_modules/.bin/db-migrate up --config database.json -e production
+          EOF
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf ~/.ssh

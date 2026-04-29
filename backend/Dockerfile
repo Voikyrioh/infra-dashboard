@@ -8,8 +8,10 @@ LABEL org.opencontainers.image.licenses=MIT
 # 📁 Copy of source files
 COPY src src/
 COPY libraries libraries/
+COPY migrations migrations/
 COPY index.ts .
 COPY package.json .
+COPY database.json .
 COPY build.mjs .
 
 #  Install app dependencies
@@ -23,6 +25,8 @@ FROM node:24-alpine AS runner
 # 🔨 Copy built files
 COPY --from=builder dist .
 COPY --from=builder node_modules node_modules/
+COPY --from=builder migrations migrations/
+COPY --from=builder database.json .
 
 # 🔌 Expose the listening port of your app
 EXPOSE $PORT
