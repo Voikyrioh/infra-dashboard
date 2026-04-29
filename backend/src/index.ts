@@ -9,6 +9,7 @@ import app from './entry-points/app'
 let server: ServerType
 function graceFullStart() {
 	client.test().catch((e) => {
+		console.error('STARTUP ERROR:', e)
 		logger.error(e)
 		graceFullStop(1)
 	})
