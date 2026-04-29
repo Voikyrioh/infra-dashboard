@@ -22,6 +22,7 @@ export default {
 			LokiUrl: string | null
 			GitHubToken: string | null
 			GitHubOwner: string
+			RpId: string
 		}
 	>(ServerConfig),
 	Postgres: generateConfig<
