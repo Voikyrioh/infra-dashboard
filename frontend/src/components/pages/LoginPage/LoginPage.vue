@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, toRaw } from "vue";
 import { useRouter } from "vue-router";
 import AppButton from "@/components/atoms/AppButton/AppButton.vue";
 import AppInput from "@/components/atoms/AppInput/AppInput.vue";
@@ -41,7 +41,7 @@ async function handleSetup() {
 	if (!login.password.trim() || !login.passkeyOptions) return;
 	login.setState("creating-passkey");
 	try {
-		const credential = await startRegistration({ optionsJSON: login.passkeyOptions });
+		const credential = await startRegistration({ optionsJSON: toRaw(login.passkeyOptions) });
 		await initFirstAuth(login.password, credential);
 		auth.setAuthenticated(true);
 		router.push("/dashboard");
