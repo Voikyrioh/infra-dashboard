@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - HOSTNAME=voikyrioh.fr
       - PORT=8080
       - PRIVATE_KEY=/data/ssl/id_rsa
       - PUBLIC_KEY=/data/ssl/id_rsa.pub

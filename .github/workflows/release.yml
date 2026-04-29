@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: read
     steps:
       - name: Validate tag format
         run: |
@@ -53,8 +52,8 @@ jobs:
           tags: |
             ghcr.io/voikyrioh/dashboard-api:${{ inputs.tag }}
             ghcr.io/voikyrioh/dashboard-api:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
 
   publish_frontend:
     runs-on: ubuntu-latest
@@ -79,8 +78,8 @@ jobs:
           tags: |
             ghcr.io/voikyrioh/dashboard-frontend:${{ inputs.tag }}
             ghcr.io/voikyrioh/dashboard-frontend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
 
   deploy:
     needs: [create_release, publish_backend, publish_frontend]
@@ -97,7 +96,9 @@ jobs:
         run: |
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /opt/infra/apps/dashboard
-            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ inputs.tag }}/" .env
+            grep -q '^IMAGE_TAG=' .env && \
+              sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ inputs.tag }}/" .env || \
+              echo "IMAGE_TAG=${{ inputs.tag }}" >> .env
             docker compose pull
             docker compose up -d --remove-orphans
           EOF
