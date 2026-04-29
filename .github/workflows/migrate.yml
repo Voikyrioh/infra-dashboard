@@ -22,12 +22,17 @@ jobs:
       - name: Run migrations
         run: |
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -a
+            source /opt/infra/apps/dashboard/.env
+            set +a
             docker run --rm \
               --network postgres \
-              --env-file /opt/infra/apps/dashboard/.env \
               -e NODE_ENV=production \
               -e PG_HOST=shared_postgres \
               -e PG_PORT=5432 \
+              -e PG_USER="$PG_USER" \
+              -e PG_PASSWORD="$PG_PASSWORD" \
+              -e PG_DATABASE="${PG_DATABASE:-dashboard}" \
               ghcr.io/voikyrioh/dashboard-api:${{ inputs.tag }} \
               node_modules/.bin/db-migrate up --config database.json -e production
           EOF
