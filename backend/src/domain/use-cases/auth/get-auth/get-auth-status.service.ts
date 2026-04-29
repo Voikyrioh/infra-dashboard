@@ -36,7 +36,6 @@ export async function getPasskeyCreationOptions(account: AccountEntity) {
 			authenticatorSelection: {
 				residentKey: 'preferred',
 				userVerification: 'preferred',
-				authenticatorAttachment: 'platform',
 			},
 		})
 
