@@ -6,7 +6,7 @@ export const PasskeySchema = z.object({
 	// SQL: Store raw bytes as BYTEA. Stored as signed bytes for compatibility.
 	publicKey: z.array(z.number().int().min(-128).max(127)),
 	// Internal account UUID
-	accountId: z.uuidv6(),
+	accountId: z.uuidv7(),
 	// SQL: Store as TEXT. Index this column.
 	webauthnUserID: z.base64url(),
 	// SQL: BIGINT
