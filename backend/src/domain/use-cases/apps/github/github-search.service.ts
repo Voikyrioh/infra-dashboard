@@ -33,8 +33,10 @@ export async function searchAppsOnGitHub(): Promise<
     throw new AppError('internal-server-error', 'GitHub API unavailable')
 
   const data = (await res.json()) as GitHubCodeSearchResult
-  return data.items.map((item) => ({
-    repoName: item.repository.name,
-    repoUrl: item.repository.html_url,
-  }))
+  return data.items
+    .filter((item) => item.repository.name !== 'dashboard')
+    .map((item) => ({
+      repoName: item.repository.name,
+      repoUrl: item.repository.html_url,
+    }))
 }

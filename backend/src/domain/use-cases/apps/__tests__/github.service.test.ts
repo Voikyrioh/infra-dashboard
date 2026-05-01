@@ -33,6 +33,21 @@ describe('github-search.service', () => {
     })
   })
 
+  it('filtre le repo dashboard des résultats', async () => {
+    mockFetch({
+      ok: true,
+      json: async () => ({
+        items: [
+          { repository: { name: 'dashboard', html_url: 'https://github.com/voikyrioh/dashboard' } },
+          { repository: { name: 'my-app', html_url: 'https://github.com/voikyrioh/my-app' } },
+        ],
+      }),
+    })
+    const results = await searchAppsOnGitHub()
+    expect(results).to.have.length(1)
+    expect(results[0].repoName).to.equal('my-app')
+  })
+
   it('lance une AppError si la requête échoue', async () => {
     mockFetch({ ok: false, status: 403 })
     try {
