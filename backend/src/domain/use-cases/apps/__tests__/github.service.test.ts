@@ -46,6 +46,7 @@ describe('github-search.service', () => {
     const results = await searchAppsOnGitHub()
     expect(results).to.have.length(1)
     expect(results[0].repoName).to.equal('my-app')
+    expect(results[0].repoUrl).to.equal('https://github.com/voikyrioh/my-app')
   })
 
   it('lance une AppError si la requête échoue', async () => {

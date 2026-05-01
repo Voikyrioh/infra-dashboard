@@ -17,7 +17,7 @@ export async function searchAppsOnGitHub(): Promise<
   if (!token) throw new AppError('internal-server-error', 'GITHUB_TOKEN not configured')
 
   const query = encodeURIComponent(
-    `${Config.Server.GitHubOwner}/dashboard/.github/workflows/build-deploy.yml in:file`,
+    `${Config.Server.GitHubOwner}/${Config.Server.GitHubRepo}/.github/workflows/build-deploy.yml in:file`,
   )
   const res = await fetch(
     `https://api.github.com/search/code?q=${query}&per_page=100`,
@@ -34,7 +34,7 @@ export async function searchAppsOnGitHub(): Promise<
 
   const data = (await res.json()) as GitHubCodeSearchResult
   return data.items
-    .filter((item) => item.repository.name !== 'dashboard')
+    .filter((item) => item.repository.name !== Config.Server.GitHubRepo)
     .map((item) => ({
       repoName: item.repository.name,
       repoUrl: item.repository.html_url,
