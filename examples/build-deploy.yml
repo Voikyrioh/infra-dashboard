@@ -17,6 +17,7 @@ on:
       tag:
         description: "Version tag (ex: v1.0.0)"
         required: true
+        type: string
 
 jobs:
   deploy:
