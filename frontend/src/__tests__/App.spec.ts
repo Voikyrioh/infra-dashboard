@@ -10,10 +10,10 @@ const router = createRouter({
 });
 
 describe("App", () => {
-	it("mounts properly with header", () => {
+	it("mounts properly with sidebar layout", () => {
 		const wrapper = mount(App, {
 			global: { plugins: [createPinia(), router] },
 		});
-		expect(wrapper.find(".app-header").exists()).toBe(true);
+		expect(wrapper.find(".app-layout").exists()).toBe(true);
 	});
 });
