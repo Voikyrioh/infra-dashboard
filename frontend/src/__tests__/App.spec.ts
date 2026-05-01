@@ -15,5 +15,6 @@ describe("App", () => {
 			global: { plugins: [createPinia(), router] },
 		});
 		expect(wrapper.find(".app-layout").exists()).toBe(true);
+		expect(wrapper.find(".app-sidebar").exists()).toBe(true);
 	});
 });

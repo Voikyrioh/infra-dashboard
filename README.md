@@ -35,7 +35,7 @@ dashboard/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── atoms/    # AppButton, AppInput
-│   │   │   ├── molecules/# AuthCard, AppHeader
+│   │   │   ├── molecules/# AuthCard, AppSidebar
 │   │   │   └── pages/    # LoginPage, DashboardPage
 │   │   ├── stores/       # Pinia (auth)
 │   │   ├── services/     # Appels API
