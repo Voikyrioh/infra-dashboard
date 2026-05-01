@@ -21,7 +21,7 @@ on:
 
 jobs:
   deploy:
-    uses: voikyrioh/dashboard/.github/workflows/build-deploy.yml@main
+    uses: voikyrioh/infra-dashboard/.github/workflows/build-deploy.yml@main
     with:
       app-name: <app-name>
       tag: ${{ inputs.tag }}

@@ -145,7 +145,7 @@ export default {
 		name: 'GITHUB_REPO',
 		description: 'GitHub repository name for this dashboard',
 		default: {
-			_: 'dashboard',
+			_: 'infra-dashboard',
 		},
 		validator: z.string().min(1),
 	},
