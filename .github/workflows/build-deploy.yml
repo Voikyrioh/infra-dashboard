@@ -63,14 +63,17 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set lowercase owner
+        id: owner
+        run: echo "value=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app-name }}:${{ inputs.tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app-name }}:latest
+            ghcr.io/${{ steps.owner.outputs.value }}/${{ inputs.app-name }}:${{ inputs.tag }}
+            ghcr.io/${{ steps.owner.outputs.value }}/${{ inputs.app-name }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
