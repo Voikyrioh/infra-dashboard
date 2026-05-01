@@ -22,6 +22,9 @@ on:
 jobs:
   deploy:
     uses: voikyrioh/infra-dashboard/.github/workflows/build-deploy.yml@main
+    permissions:
+      contents: write
+      packages: write
     with:
       app-name: <app-name>
       tag: ${{ inputs.tag }}
