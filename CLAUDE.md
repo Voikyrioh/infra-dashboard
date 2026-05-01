@@ -54,3 +54,6 @@ npm run dev --workspace=frontend
 | `JWT_EXPIRATION_TIME_MS` | Durée du token en ms           | `3600000` (1h)  |
 | `PORT`                | Port du serveur                    | `3000`          |
 | `PG_HOST/USER/PASSWORD/DATABASE` | Postgres      | `localhost/user/password/dashboard` |
+| `GITHUB_TOKEN`       | PAT GitHub pour la détection d'apps | —               |
+| `GITHUB_OWNER`       | Username GitHub de l'owner         | `voikyrioh`     |
+| `GITHUB_REPO`        | Nom du repo dashboard (pour la détection) | `dashboard` |

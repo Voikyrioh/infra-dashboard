@@ -3,6 +3,7 @@ import { searchAppsOnGitHub } from '../github/github-search.service'
 import { getLastDeployStatus } from '../github/github-actions.service'
 
 process.env.GITHUB_TOKEN = 'test-token'
+process.env.GITHUB_REPO = 'dashboard'
 
 const originalFetch = global.fetch
 

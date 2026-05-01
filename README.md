@@ -213,7 +213,7 @@ IMAGE_TAG=<sha> docker compose up -d
 - [ ] **DASH-3/4** — Métriques serveur (CPU, RAM, réseau via Docker socket + historique Victoria Metrics)
 - [ ] **DASH-4** — Visites uniques (Cloudflare API global + Loki/Traefik par app)
 - [ ] **DASH-5/6** — Dashboard métriques temps réel + graphes
-- [ ] **DASH-7/8** — Base de données d'applications (détection via GitHub Actions workflow réutilisable)
-- [ ] **DASH-9/10** — Liste des applications avec état
+- [x] **DASH-7/8** — Base de données d'applications (détection via GitHub Actions workflow réutilisable)
+- [x] **DASH-9/10** — Liste des applications avec état
 - [ ] **DASH-11/12/13** — Détail app (métriques container, logs, déploiements)
 - [ ] **DASH-14/15/16/17** — Déploiement manuel + gestion env vars
