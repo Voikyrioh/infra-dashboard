@@ -149,6 +149,14 @@ export default {
 		},
 		validator: z.string().min(1),
 	},
+	GitHubInfraRepo: {
+		name: 'GITHUB_INFRA_REPO',
+		description: 'GitHub repository name for the infrastructure repo',
+		default: {
+			_: 'infra-as-code',
+		},
+		validator: z.string().min(1),
+	},
 	RpId: {
 		name: 'RP_ID',
 		description: 'WebAuthn Relying Party ID (your domain, e.g. voikyrioh.fr)',
