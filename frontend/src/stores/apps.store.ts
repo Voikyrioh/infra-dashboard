@@ -7,6 +7,7 @@ import {
   configureApp,
   fetchTags,
   createTag,
+  deployApp,
 } from "@/services/apps.service";
 
 export const useAppsStore = defineStore("apps", () => {
@@ -48,5 +49,10 @@ export const useAppsStore = defineStore("apps", () => {
     return tag;
   }
 
-  return { apps, tags, loading, loadApps, sync, loadTags, configure, addTag };
+  async function deploy(id: string, version: string) {
+    await deployApp(id, version);
+    await loadApps();
+  }
+
+  return { apps, tags, loading, loadApps, sync, loadTags, configure, addTag, deploy };
 });

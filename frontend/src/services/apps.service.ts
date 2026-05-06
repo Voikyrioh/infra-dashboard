@@ -7,11 +7,6 @@ export interface PredefinedTag {
   color: string;
 }
 
-export interface DeployStatus {
-  conclusion: "success" | "failure" | "cancelled" | "timed_out" | null;
-  runAt: string | null;
-}
-
 export interface App {
   id: string;
   repoName: string;
@@ -23,8 +18,10 @@ export interface App {
   lastSyncedAt: string | null;
   createdAt: string;
   tags: PredefinedTag[];
-  deployStatus: DeployStatus | null;
   containerStatus: "running" | "stopped" | "unknown" | null;
+  appName: string | null;
+  imageName: string | null;
+  deployedVersion: string | null;
 }
 
 export interface ConfigureAppPayload {
@@ -79,4 +76,21 @@ export async function createTag(
     body: JSON.stringify(data),
   });
   return handleResponse<PredefinedTag>(res);
+}
+
+export async function fetchAppVersions(id: string): Promise<string[]> {
+  const res = await fetch(`/api/v1/apps/${id}/versions`);
+  if (!res.ok) return [];
+  return res.json() as Promise<string[]>;
+}
+
+export async function deployApp(id: string, version: string): Promise<void> {
+  const res = await fetch(`/api/v1/apps/${id}/deploy`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ version }),
+  });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`Deploy failed: ${res.status}`);
+  }
 }
