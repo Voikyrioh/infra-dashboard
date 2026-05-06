@@ -28,7 +28,7 @@ describe("ApplicationsPage", () => {
     vi.spyOn(appsService, "fetchTags").mockResolvedValue([]);
     const wrapper = mount(ApplicationsPage);
     expect(wrapper.text()).toContain("Application");
-    expect(wrapper.text()).toContain("Deploy");
+    expect(wrapper.text()).toContain("Déploiement");
     expect(wrapper.text()).toContain("Container");
   });
 });

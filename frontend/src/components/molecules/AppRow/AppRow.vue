@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import TagPill from "@/components/atoms/TagPill/TagPill.vue";
+import VersionSelect from "@/components/atoms/VersionSelect/VersionSelect.vue";
 import type { App } from "@/services/apps.service";
 
-const props = defineProps<{ app: App }>();
-const emit = defineEmits<{ configure: [] }>();
+const props = defineProps<{
+  app: App;
+  versions: string[];
+}>();
+const emit = defineEmits<{
+  configure: [];
+  deploy: [appId: string, version: string];
+}>();
 
 const typeColors: Record<string, string> = {
   frontend: "rgba(52,211,153,0.15)",
@@ -17,14 +24,9 @@ const typeTextColors: Record<string, string> = {
 };
 
 const statusDot: Record<string, string> = {
-  success: "#34d399",
   running: "#34d399",
-  failure: "#ef4444",
   stopped: "#6b7280",
   unknown: "#6b7280",
-  cancelled: "#f59e0b",
-  timed_out: "#ef4444",
-  in_progress: "#60a5fa",
 };
 
 function handleClick() {
@@ -85,20 +87,6 @@ function handleClick() {
       </template>
     </div>
 
-    <!-- Deploy -->
-    <div class="app-row__status">
-      <template v-if="app.deployStatus">
-        <span
-          class="app-row__dot"
-          :style="{ background: statusDot[app.deployStatus.conclusion ?? 'unknown'] }"
-        />
-        <span class="app-row__status-label">
-          {{ app.deployStatus.conclusion === 'success' ? 'OK' : app.deployStatus.conclusion === 'failure' ? 'KO' : app.deployStatus.conclusion }}
-        </span>
-      </template>
-      <span v-else class="app-row__dash">—</span>
-    </div>
-
     <!-- Container -->
     <div class="app-row__status">
       <template v-if="app.containerStatus">
@@ -112,13 +100,23 @@ function handleClick() {
       </template>
       <span v-else class="app-row__dash">—</span>
     </div>
+
+    <!-- Deploy -->
+    <div class="app-row__actions" @click.stop>
+      <VersionSelect
+        :versions="versions"
+        :deployed-version="app.deployedVersion"
+        :disabled="!app.configured || versions.length === 0"
+        @deploy="(version) => emit('deploy', app.id, version)"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
 .app-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr 100px 100px;
+  grid-template-columns: 2fr 1fr 2fr 100px auto;
   gap: 12px;
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.04);
@@ -192,5 +190,10 @@ function handleClick() {
 .app-row__dash {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.2);
+}
+.app-row__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 </style>

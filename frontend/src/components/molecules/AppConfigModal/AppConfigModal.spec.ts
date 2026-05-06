@@ -14,8 +14,10 @@ const app: App = {
   lastSyncedAt: null,
   createdAt: "2026-01-01",
   tags: [],
-  deployStatus: null,
   containerStatus: null,
+  appName: null,
+  imageName: null,
+  deployedVersion: null,
 };
 
 const tags: PredefinedTag[] = [

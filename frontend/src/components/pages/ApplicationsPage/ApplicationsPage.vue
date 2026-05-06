@@ -26,6 +26,10 @@ async function handleSubmit(payload: any) {
 async function handleAddTag(data: any) {
   await store.addTag(data);
 }
+
+async function handleDeploy(appId: string, version: string) {
+  await store.deploy(appId, version);
+}
 </script>
 
 <template>
@@ -48,8 +52,8 @@ async function handleAddTag(data: any) {
         <span>Application</span>
         <span>Type</span>
         <span>Tags</span>
-        <span>Deploy</span>
         <span>Container</span>
+        <span>Déploiement</span>
       </div>
 
       <div v-if="store.loading" class="applications-page__loading">
@@ -61,7 +65,9 @@ async function handleAddTag(data: any) {
           v-for="app in store.apps"
           :key="app.id"
           :app="app"
+          :versions="[]"
           @configure="openConfigure(app)"
+          @deploy="handleDeploy"
         />
         <div v-if="store.apps.length === 0" class="applications-page__empty">
           Aucune application. Clique sur Synchroniser pour détecter les apps GitHub.
@@ -122,7 +128,7 @@ async function handleAddTag(data: any) {
 }
 .applications-page__table-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr 100px 100px;
+  grid-template-columns: 2fr 1fr 2fr 100px auto;
   gap: 12px;
   padding: 8px 12px;
   font-size: 10px;
