@@ -9,25 +9,16 @@ export const appEntitySchema = z.object({
   type: z.enum(['frontend', 'backend', 'fullstack']).nullable(),
   containerName: z.string().nullable(),
   configured: z.boolean(),
+  appName: z.string().nullable(),
+  imageName: z.string().nullable(),
   lastSyncedAt: z.date().nullable(),
   createdAt: z.date(),
   tags: z.array(predefinedTagSchema).default([]),
 })
 
 export const appWithStatusSchema = appEntitySchema.extend({
-  deployStatus: z
-    .object({
-      conclusion: z
-        .enum(['success', 'failure', 'cancelled', 'timed_out'])
-        .nullable(),
-      runAt: z.date().nullable(),
-    })
-    .nullable()
-    .default(null),
-  containerStatus: z
-    .enum(['running', 'stopped', 'unknown'])
-    .nullable()
-    .default(null),
+  containerStatus: z.enum(['running', 'stopped', 'unknown']).nullable().default(null),
+  deployedVersion: z.string().nullable().default(null),
 })
 
 export type AppEntity = z.infer<typeof appEntitySchema>

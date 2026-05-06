@@ -8,6 +8,8 @@ export const appModelSchema = z.object({
   type: z.string().nullable(),
   container_name: z.string().nullable(),
   configured: z.boolean(),
+  app_name: z.string().nullable(),
+  image_name: z.string().nullable(),
   last_synced_at: z.date().nullable(),
   created_at: z.date(),
   updated_at: z.date(),

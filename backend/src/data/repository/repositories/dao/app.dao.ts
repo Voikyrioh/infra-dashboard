@@ -16,6 +16,8 @@ export const assertAndCoerceAppModelToEntity = (
     type: model.type,
     containerName: model.container_name,
     configured: model.configured,
+    appName: model.app_name,
+    imageName: model.image_name,
     lastSyncedAt: model.last_synced_at,
     createdAt: model.created_at,
     tags,
