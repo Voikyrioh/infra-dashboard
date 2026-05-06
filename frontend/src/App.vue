@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import "@/assets/style/main.css";
 import AppSidebar from "@/components/molecules/AppSidebar/AppSidebar.vue";
+import AppToast from "@/components/atoms/AppToast/AppToast.vue";
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import AppSidebar from "@/components/molecules/AppSidebar/AppSidebar.vue";
     <main class="app-layout__content">
       <RouterView />
     </main>
+    <AppToast />
   </div>
 </template>
 

@@ -4,11 +4,14 @@ import { useAppsStore } from "@/stores/apps.store";
 import AppRow from "@/components/molecules/AppRow/AppRow.vue";
 import AppConfigModal from "@/components/molecules/AppConfigModal/AppConfigModal.vue";
 import { fetchAppVersions, type App } from "@/services/apps.service";
+import { useToast } from "@/composables/useToast";
 
 const store = useAppsStore();
+const { add: addToast } = useToast();
 const modalOpen = ref(false);
 const selectedApp = ref<App | null>(null);
 const versionsMap = ref<Map<string, string[]>>(new Map());
+const deploying = ref<Set<string>>(new Set());
 
 async function loadVersions() {
   await Promise.all(
@@ -42,8 +45,18 @@ async function handleAddTag(data: any) {
 }
 
 async function handleDeploy(appId: string, version: string) {
-  await store.deploy(appId, version);
-  await loadVersions();
+  deploying.value = new Set(deploying.value).add(appId)
+  try {
+    await store.deploy(appId, version)
+    addToast(`Déploiement de ${version} déclenché — le workflow tourne sur GitHub Actions.`, 'success')
+    await loadVersions()
+  } catch {
+    addToast('Échec du déclenchement du déploiement.', 'error')
+  } finally {
+    const next = new Set(deploying.value)
+    next.delete(appId)
+    deploying.value = next
+  }
 }
 </script>
 
@@ -81,6 +94,7 @@ async function handleDeploy(appId: string, version: string) {
           :key="app.id"
           :app="app"
           :versions="versionsMap.get(app.id) ?? []"
+          :deploying="deploying.has(app.id)"
           @configure="openConfigure(app)"
           @deploy="handleDeploy"
         />

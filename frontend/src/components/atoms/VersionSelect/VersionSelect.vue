@@ -5,6 +5,7 @@ const props = defineProps<{
   versions: string[]
   deployedVersion: string | null
   disabled: boolean
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{ deploy: [version: string] }>()
@@ -41,7 +42,7 @@ function handleInputChange(e: Event) {
 }
 
 function handleDeploy() {
-  if (props.disabled || !selected.value) return
+  if (props.disabled || props.loading || !selected.value) return
   emit('deploy', selected.value)
 }
 </script>
@@ -78,15 +79,19 @@ function handleDeploy() {
       </div>
 
       <button
-        :disabled="disabled"
-        class="text-xs font-semibold px-3 py-1 border-none whitespace-nowrap"
+        :disabled="disabled || loading"
+        class="relative text-xs font-semibold px-3 py-1 border-none whitespace-nowrap inline-flex items-center justify-center"
         :class="isRollback
           ? 'bg-red-950 text-orange-400 cursor-pointer'
-          : disabled ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+          : disabled || loading ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
           : 'bg-green-950 text-green-400 cursor-pointer'"
+        style="min-width:84px"
         @click="handleDeploy"
       >
-        {{ isRollback ? '↓ Rollback' : '↑ Déployer' }}
+        <span v-if="loading" class="vs-spinner" aria-hidden="true" />
+        <span :class="{ 'opacity-0': loading }">
+          {{ isRollback ? '↓ Rollback' : '↑ Déployer' }}
+        </span>
       </button>
     </div>
 
@@ -113,3 +118,15 @@ function handleDeploy() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.vs-spinner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin-slow 0.7s linear infinite;
+}
+</style>

@@ -48,7 +48,7 @@ describe('VersionSelect', () => {
     await wrapper.vm.$nextTick()
     const items = wrapper.findAll('[data-testid="version-option"]')
     expect(items).toHaveLength(1)
-    expect(items[0].text()).toContain('v0.2.0')
+    expect(items[0]!.text()).toContain('v0.2.0')
   })
 
   it('est désactivé quand disabled=true', () => {

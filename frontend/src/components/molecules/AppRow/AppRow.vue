@@ -6,6 +6,7 @@ import type { App } from "@/services/apps.service";
 const props = defineProps<{
   app: App;
   versions: string[];
+  deploying?: boolean;
 }>();
 const emit = defineEmits<{
   configure: [];
@@ -107,6 +108,7 @@ function handleClick() {
         :versions="versions"
         :deployed-version="app.deployedVersion"
         :disabled="!app.configured || versions.length === 0"
+        :loading="deploying"
         @deploy="(version) => emit('deploy', app.id, version)"
       />
     </div>
