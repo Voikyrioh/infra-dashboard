@@ -3,14 +3,28 @@ import { onMounted, ref } from "vue";
 import { useAppsStore } from "@/stores/apps.store";
 import AppRow from "@/components/molecules/AppRow/AppRow.vue";
 import AppConfigModal from "@/components/molecules/AppConfigModal/AppConfigModal.vue";
-import type { App } from "@/services/apps.service";
+import { fetchAppVersions, type App } from "@/services/apps.service";
 
 const store = useAppsStore();
 const modalOpen = ref(false);
 const selectedApp = ref<App | null>(null);
+const versionsMap = ref<Map<string, string[]>>(new Map());
+
+async function loadVersions() {
+  await Promise.all(
+    store.apps
+      .filter((a) => a.configured && a.imageName)
+      .map(async (a) => {
+        const versions = await fetchAppVersions(a.id);
+        versionsMap.value = new Map(versionsMap.value).set(a.id, versions);
+      }),
+  );
+}
 
 onMounted(async () => {
-  await Promise.all([store.loadApps(), store.loadTags()]);
+  await store.loadApps();
+  await store.loadTags();
+  await loadVersions();
 });
 
 function openConfigure(app: App) {
@@ -29,6 +43,7 @@ async function handleAddTag(data: any) {
 
 async function handleDeploy(appId: string, version: string) {
   await store.deploy(appId, version);
+  await loadVersions();
 }
 </script>
 
@@ -65,7 +80,7 @@ async function handleDeploy(appId: string, version: string) {
           v-for="app in store.apps"
           :key="app.id"
           :app="app"
-          :versions="[]"
+          :versions="versionsMap.get(app.id) ?? []"
           @configure="openConfigure(app)"
           @deploy="handleDeploy"
         />
