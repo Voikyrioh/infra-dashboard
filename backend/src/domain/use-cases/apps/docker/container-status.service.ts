@@ -3,10 +3,14 @@ import Config from '@config'
 
 export type ContainerStatus = 'running' | 'stopped' | 'unknown'
 
+export interface ContainerResult {
+  status: ContainerStatus
+  version: string | null
+}
+
 interface DockerContainerInfo {
-  State: {
-    Running: boolean
-  }
+  State: { Running: boolean }
+  Config: { Image: string }
 }
 
 function dockerGet<T>(socketPath: string, path: string): Promise<T> {
@@ -26,16 +30,20 @@ function dockerGet<T>(socketPath: string, path: string): Promise<T> {
   })
 }
 
-export async function getContainerStatus(
-  containerName: string,
-): Promise<ContainerStatus> {
+export async function getContainerStatus(containerName: string): Promise<ContainerResult> {
   try {
     const info = await dockerGet<DockerContainerInfo>(
       Config.Server.DockerSocket,
       `/containers/${containerName}/json`,
     )
-    return info.State.Running ? 'running' : 'stopped'
+    const image = info.Config?.Image ?? ''
+    const tag = image.includes(':') ? image.split(':').pop() ?? null : null
+    const version = tag && /^v\d+\.\d+\.\d+$/.test(tag) ? tag : null
+    return {
+      status: info.State.Running ? 'running' : 'stopped',
+      version,
+    }
   } catch {
-    return 'unknown'
+    return { status: 'unknown', version: null }
   }
 }
