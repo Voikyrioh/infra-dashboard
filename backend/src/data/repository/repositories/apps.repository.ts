@@ -17,11 +17,23 @@ export class AppsRepository {
 		)
 	}
 
-	async upsertFromGitHub(
-		repoName: string,
-		repoUrl: string,
-	): Promise<AppEntity> {
-		const model = await resources.apps.upsert(repoName, repoUrl)
+	async findById(id: string): Promise<AppEntity> {
+		const model = await resources.apps.findById(id)
+		return assertAndCoerceAppModelToEntity(model)
+	}
+
+	async upsertFromInfra(params: {
+		appName: string
+		repoName: string
+		repoUrl: string
+		imageName: string
+	}): Promise<AppEntity> {
+		const model = await resources.apps.upsert({
+			repoName: params.repoName,
+			repoUrl: params.repoUrl,
+			appName: params.appName,
+			imageName: params.imageName,
+		})
 		return assertAndCoerceAppModelToEntity(model)
 	}
 

@@ -7,12 +7,27 @@ class AppsResource {
     return pg.sql<AppModel[]>`SELECT * FROM apps ORDER BY created_at DESC`
   }
 
-  async upsert(repoName: string, repoUrl: string): Promise<AppModel> {
+  async findById(id: string): Promise<AppModel> {
+    const [row] = await pg.sql<AppModel[]>`SELECT * FROM apps WHERE id = ${id}`
+    if (!row) throw new AppError('not-found', 'App not found')
+    return row
+  }
+
+  async upsert(params: {
+    repoName: string
+    repoUrl: string
+    appName: string
+    imageName: string
+  }): Promise<AppModel> {
+    const { repoName, repoUrl, appName, imageName } = params
     const [row] = await pg.sql<AppModel[]>`
-      INSERT INTO apps (repo_name, repo_url, last_synced_at)
-      VALUES (${repoName}, ${repoUrl}, now())
+      INSERT INTO apps (repo_name, repo_url, app_name, image_name, last_synced_at)
+      VALUES (${repoName}, ${repoUrl}, ${appName}, ${imageName}, now())
       ON CONFLICT (repo_name)
-      DO UPDATE SET last_synced_at = now()
+      DO UPDATE SET
+        app_name = ${appName},
+        image_name = ${imageName},
+        last_synced_at = now()
       RETURNING *
     `
     if (!row) throw new AppError('internal-server-error', 'Upsert apps failed')
