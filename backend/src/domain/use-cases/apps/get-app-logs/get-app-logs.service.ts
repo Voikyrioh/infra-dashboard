@@ -1,3 +1,4 @@
+import http from 'node:http'
 import Config from '@config'
 
 export interface LogLine {
@@ -56,8 +57,6 @@ export async function fetchDockerFileLogs(
   const socketPath = Config.Server.DockerSocket
 
   return new Promise((resolve) => {
-    const http = require('node:http')
-
     const execBody = JSON.stringify({
       AttachStdout: true,
       AttachStderr: true,

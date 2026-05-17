@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import GaugeCircle from "@/components/atoms/GaugeCircle/GaugeCircle.vue";
 import VersionSelect from "@/components/atoms/VersionSelect/VersionSelect.vue";
@@ -173,6 +173,10 @@ async function switchLogSource(src: "loki" | "file") {
   logSource.value = src;
   await loadLogs();
 }
+
+onUnmounted(() => {
+  if (logRefreshInterval) clearInterval(logRefreshInterval);
+});
 
 onMounted(async () => {
   loading.value = true;
