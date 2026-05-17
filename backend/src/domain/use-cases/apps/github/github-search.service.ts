@@ -74,6 +74,10 @@ export async function searchAppsOnGitHub(): Promise<AppInfo[]> {
     const c = config as Partial<InfraAppConfig>
     if (!c?.name || !c?.github_repo || !c?.image) continue
 
+    const EXCLUDED_APP_NAMES = ['example']
+    if (EXCLUDED_APP_NAMES.includes(c.name)) continue
+    if (c.name === Config.Server.GitHubRepo) continue
+
     const repoName = c.github_repo.split('/').pop()!
     const imageName = c.image.split('/').pop()!
 

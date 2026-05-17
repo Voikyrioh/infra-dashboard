@@ -22,6 +22,7 @@ export interface App {
   appName: string | null;
   imageName: string | null;
   deployedVersion: string | null;
+  autoDeployEnabled: boolean;
 }
 
 export interface ConfigureAppPayload {
@@ -93,4 +94,70 @@ export async function deployApp(id: string, version: string): Promise<void> {
   if (!res.ok && res.status !== 204) {
     throw new Error(`Deploy failed: ${res.status}`);
   }
+}
+
+export interface AppStats {
+  cpuPercent: number;
+  memUsageMb: number;
+  memLimitMb: number;
+  memPercent: number;
+}
+
+export interface InfraConfig {
+  env: Record<string, string>;
+  logFile: string | null;
+}
+
+export interface LogLine {
+  timestamp: string;
+  message: string;
+  source: "loki" | "file";
+}
+
+export async function fetchApp(id: string): Promise<App> {
+  const res = await fetch(`/api/v1/apps/${id}`);
+  return handleResponse<App>(res);
+}
+
+export async function fetchAppStats(id: string): Promise<AppStats | null> {
+  const res = await fetch(`/api/v1/apps/${id}/stats`);
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export async function fetchAppInfraConfig(id: string): Promise<InfraConfig | null> {
+  const res = await fetch(`/api/v1/apps/${id}/infra-config`);
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export async function updateAppInfraConfig(
+  id: string,
+  env: Record<string, string>,
+): Promise<void> {
+  const res = await fetch(`/api/v1/apps/${id}/infra-config`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ env }),
+  });
+  if (!res.ok && res.status !== 204) throw new Error("Update failed");
+}
+
+export async function fetchAppLogs(
+  id: string,
+  source: "loki" | "file" = "loki",
+  limit = 200,
+): Promise<LogLine[]> {
+  const res = await fetch(`/api/v1/apps/${id}/logs?source=${source}&limit=${limit}`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function toggleAutoDeploy(id: string, enabled: boolean): Promise<void> {
+  const res = await fetch(`/api/v1/apps/${id}/auto-deploy`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ enabled }),
+  });
+  if (!res.ok && res.status !== 204) throw new Error("Toggle failed");
 }

@@ -61,7 +61,7 @@ function save() {
       <div class="modal">
         <div class="modal__header">
           <div>
-            <div class="modal__title">Configurer l'application</div>
+            <div class="modal__title">{{ app.configured ? 'Modifier la configuration' : 'Configurer l\'application' }}</div>
             <div class="modal__repo">{{ app.repoUrl.replace("https://github.com/", "") }}</div>
           </div>
           <button class="modal__close" @click="cancel">✕</button>

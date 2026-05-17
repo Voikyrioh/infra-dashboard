@@ -23,6 +23,11 @@ const router = createRouter({
 			component: () =>
 				import("@/components/pages/ApplicationsPage/ApplicationsPage.vue"),
 		},
+		{
+			path: "/applications/:id",
+			component: () =>
+				import("@/components/pages/AppDetailPage/AppDetailPage.vue"),
+		},
 	],
 });
 

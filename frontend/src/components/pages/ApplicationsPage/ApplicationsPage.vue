@@ -96,6 +96,7 @@ async function handleDeploy(appId: string, version: string) {
           :versions="versionsMap.get(app.id) ?? []"
           :deploying="deploying.has(app.id)"
           @configure="openConfigure(app)"
+          @edit="openConfigure(app)"
           @deploy="handleDeploy"
         />
         <div v-if="store.apps.length === 0" class="applications-page__empty">

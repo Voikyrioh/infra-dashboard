@@ -18,6 +18,7 @@ export const assertAndCoerceAppModelToEntity = (
     configured: model.configured,
     appName: model.app_name,
     imageName: model.image_name,
+    autoDeployEnabled: model.auto_deploy_enabled,
     lastSyncedAt: model.last_synced_at,
     createdAt: model.created_at,
     tags,

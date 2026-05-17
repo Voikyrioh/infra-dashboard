@@ -10,6 +10,7 @@ export const appModelSchema = z.object({
   configured: z.boolean(),
   app_name: z.string().nullable(),
   image_name: z.string().nullable(),
+  auto_deploy_enabled: z.boolean().default(false),
   last_synced_at: z.date().nullable(),
   created_at: z.date(),
   updated_at: z.date(),

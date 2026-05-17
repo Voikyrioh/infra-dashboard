@@ -51,6 +51,24 @@ class AppsResource {
     if (!row) throw new AppError('not-found', 'App not found')
     return row
   }
+
+  async setAutoDeployEnabled(id: string, enabled: boolean): Promise<AppModel> {
+    const [row] = await pg.sql<AppModel[]>`
+      UPDATE apps SET auto_deploy_enabled = ${enabled}, updated_at = now()
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (!row) throw new AppError('not-found', 'App not found')
+    return row
+  }
+
+  async findByRepoFullName(repoFullName: string): Promise<AppModel | null> {
+    const repoName = repoFullName.split('/').pop() ?? repoFullName
+    const [row] = await pg.sql<AppModel[]>`
+      SELECT * FROM apps WHERE repo_name = ${repoName} LIMIT 1
+    `
+    return row ?? null
+  }
 }
 
 export default Object.freeze(new AppsResource())

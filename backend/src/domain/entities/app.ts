@@ -11,6 +11,7 @@ export const appEntitySchema = z.object({
   configured: z.boolean(),
   appName: z.string().nullable(),
   imageName: z.string().nullable(),
+  autoDeployEnabled: z.boolean().default(false),
   lastSyncedAt: z.date().nullable(),
   createdAt: z.date(),
   tags: z.array(predefinedTagSchema).default([]),

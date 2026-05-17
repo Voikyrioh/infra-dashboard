@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import TagPill from "@/components/atoms/TagPill/TagPill.vue";
 import VersionSelect from "@/components/atoms/VersionSelect/VersionSelect.vue";
 import type { App } from "@/services/apps.service";
+
+const router = useRouter();
 
 const props = defineProps<{
   app: App;
@@ -10,6 +13,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{
   configure: [];
+  edit: [];
   deploy: [appId: string, version: string];
 }>();
 
@@ -32,6 +36,7 @@ const statusDot: Record<string, string> = {
 
 function handleClick() {
   if (!props.app.configured) emit("configure");
+  else router.push(`/applications/${props.app.id}`);
 }
 </script>
 
@@ -104,6 +109,12 @@ function handleClick() {
 
     <!-- Deploy -->
     <div class="app-row__actions" @click.stop>
+      <button
+        v-if="app.configured"
+        class="app-row__edit-btn"
+        title="Modifier la configuration"
+        @click.stop="emit('edit')"
+      >✎</button>
       <VersionSelect
         :versions="versions"
         :deployed-version="app.deployedVersion"
@@ -125,6 +136,10 @@ function handleClick() {
   border-radius: 8px;
   align-items: center;
   transition: background 0.15s;
+  cursor: pointer;
+}
+.app-row:not(.app-row--unconfigured):hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 .app-row--unconfigured {
   background: rgba(255, 255, 255, 0.02);
@@ -197,5 +212,20 @@ function handleClick() {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 8px;
+}
+.app-row__edit-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+  line-height: 1;
+}
+.app-row__edit-btn:hover {
+  color: rgba(255, 255, 255, 0.6);
 }
 </style>

@@ -166,4 +166,12 @@ export default {
 		},
 		validator: z.string().min(1),
 	},
+	GitHubWebhookSecret: {
+		name: 'GITHUB_WEBHOOK_SECRET',
+		description: 'Secret used to verify GitHub webhook payloads',
+		default: {
+			_: null,
+		},
+		validator: z.string().nullish().default(null),
+	},
 }

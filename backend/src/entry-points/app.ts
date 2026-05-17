@@ -7,6 +7,7 @@ import metricsRoute from './routes/metrics'
 import visitsRoute from './routes/visits'
 import appsRoute from './routes/apps'
 import tagsRoute from './routes/tags'
+import webhooksRoute from './routes/webhooks'
 
 const app = new Hono().basePath('/api/v1')
 
@@ -18,5 +19,6 @@ app.route('/', metricsRoute)
 app.route('/', visitsRoute)
 app.route('/', appsRoute)
 app.route('/', tagsRoute)
+app.route('/', webhooksRoute)
 
 export default app

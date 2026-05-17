@@ -58,4 +58,15 @@ export class AppsRepository {
 		)
 		return assertAndCoerceAppModelToEntity(model, tags)
 	}
+
+	async setAutoDeployEnabled(id: string, enabled: boolean): Promise<AppEntity> {
+		const model = await resources.apps.setAutoDeployEnabled(id, enabled)
+		return assertAndCoerceAppModelToEntity(model)
+	}
+
+	async findByRepoFullName(repoFullName: string): Promise<AppEntity | null> {
+		const model = await resources.apps.findByRepoFullName(repoFullName)
+		if (!model) return null
+		return assertAndCoerceAppModelToEntity(model)
+	}
 }

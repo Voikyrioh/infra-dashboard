@@ -14,8 +14,28 @@ const selected = ref(props.deployedVersion ?? props.versions[0] ?? '')
 const query = ref('')
 const isOpen = ref(false)
 
+function semverToTuple(v: string): [number, number, number] {
+  const parts = v.replace('v', '').split('.').map(Number)
+  return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0]
+}
+
+function isOlderThan(a: string, b: string): boolean {
+  const [aa, ab, ac] = semverToTuple(a)
+  const [ba, bb, bc] = semverToTuple(b)
+  if (aa !== ba) return aa < ba
+  if (ab !== bb) return ab < bb
+  return ac < bc
+}
+
+const isSameVersion = computed(
+  () => !!props.deployedVersion && selected.value === props.deployedVersion,
+)
+
 const isRollback = computed(
-  () => !!props.deployedVersion && selected.value !== props.deployedVersion,
+  () =>
+    !!props.deployedVersion &&
+    selected.value !== props.deployedVersion &&
+    isOlderThan(selected.value, props.deployedVersion),
 )
 
 const filtered = computed(() =>
@@ -53,12 +73,13 @@ function handleDeploy() {
       class="inline-flex rounded-md overflow-visible"
       :class="isRollback
         ? 'border border-amber-700'
+        : isSameVersion ? 'border border-slate-600'
         : disabled ? 'border border-slate-700' : 'border border-green-800'"
-      :style="isRollback ? 'background:#1c0f00' : disabled ? 'background:#0f172a' : 'background:#0d1f12'"
+      :style="isRollback ? 'background:#1c0f00' : isSameVersion ? 'background:#0f172a' : disabled ? 'background:#0f172a' : 'background:#0d1f12'"
     >
       <div
         class="flex items-center gap-1 px-2 border-r"
-        :class="isRollback ? 'border-amber-700' : disabled ? 'border-slate-700' : 'border-green-800'"
+        :class="isRollback ? 'border-amber-700' : isSameVersion ? 'border-slate-600' : disabled ? 'border-slate-700' : 'border-green-800'"
         style="min-width:108px"
       >
         <input
@@ -66,23 +87,24 @@ function handleDeploy() {
           :disabled="disabled"
           :placeholder="disabled ? 'aucune version' : 'v0.0.0'"
           class="bg-transparent border-none outline-none text-xs font-mono w-16"
-          :class="isRollback ? 'text-orange-400' : disabled ? 'text-slate-600 italic' : 'text-green-400'"
+          :class="isRollback ? 'text-orange-400' : isSameVersion ? 'text-slate-400' : disabled ? 'text-slate-600 italic' : 'text-green-400'"
           style="cursor:pointer"
           @click="openDropdown"
           @input="handleInputChange"
         />
         <span
           class="text-xs cursor-pointer select-none"
-          :class="isRollback ? 'text-amber-700' : 'text-green-800'"
+          :class="isRollback ? 'text-amber-700' : isSameVersion ? 'text-slate-600' : 'text-green-800'"
           @click="isOpen = !isOpen"
         >▾</span>
       </div>
 
       <button
-        :disabled="disabled || loading"
+        :disabled="disabled || loading || isSameVersion"
         class="relative text-xs font-semibold px-3 py-1 border-none whitespace-nowrap inline-flex items-center justify-center"
         :class="isRollback
           ? 'bg-red-950 text-orange-400 cursor-pointer'
+          : isSameVersion ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
           : disabled || loading ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
           : 'bg-green-950 text-green-400 cursor-pointer'"
         style="min-width:84px"
@@ -90,7 +112,7 @@ function handleDeploy() {
       >
         <span v-if="loading" class="vs-spinner" aria-hidden="true" />
         <span :class="{ 'opacity-0': loading }">
-          {{ isRollback ? '↓ Rollback' : '↑ Déployer' }}
+          {{ isRollback ? '↓ Rollback' : isSameVersion ? '✓ Déployée' : '↑ Déployer' }}
         </span>
       </button>
     </div>
