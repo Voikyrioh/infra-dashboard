@@ -54,11 +54,42 @@ const editEnv = ref<Record<string, string>>({});
 const newEnvKey = ref("");
 const newEnvValue = ref("");
 
-const filteredLogs = computed(() =>
-  logSearch.value
+interface ParsedLog {
+  timestamp: string;
+  level: string;
+  levelNum: number;
+  message: string;
+  extra: string | null;
+}
+
+function parsePinoLog(line: LogLine): ParsedLog {
+  try {
+    const obj = JSON.parse(line.message);
+    if (typeof obj === "object" && obj !== null && "msg" in obj) {
+      const { level = 30, time, msg, pid: _pid, hostname: _host, ...rest } = obj as Record<string, unknown>;
+      const levelNum = Number(level);
+      const levelName =
+        levelNum >= 60 ? "FATAL" :
+        levelNum >= 50 ? "ERROR" :
+        levelNum >= 40 ? "WARN" :
+        levelNum >= 20 ? "DEBUG" : "INFO";
+      const ts = time ? new Date(Number(time)).toISOString() : line.timestamp;
+      const extraEntries = Object.entries(rest).filter(([, v]) => typeof v !== "object" || v === null);
+      const extra = extraEntries.length > 0
+        ? extraEntries.map(([k, v]) => `${k}=${String(v)}`).join("  ")
+        : null;
+      return { timestamp: ts, level: levelName, levelNum, message: String(msg), extra };
+    }
+  } catch {}
+  return { timestamp: line.timestamp, level: "INFO", levelNum: 30, message: line.message, extra: null };
+}
+
+const filteredLogs = computed(() => {
+  const lines = logSearch.value
     ? logs.value.filter((l) => l.message.toLowerCase().includes(logSearch.value.toLowerCase()))
-    : logs.value,
-);
+    : logs.value;
+  return lines.map(parsePinoLog);
+});
 
 const statusDot: Record<string, string> = {
   running: "#34d399",
@@ -385,9 +416,14 @@ onMounted(async () => {
             v-for="(line, i) in filteredLogs"
             :key="i"
             class="detail-page__log-line"
+            :class="`detail-page__log-line--${line.level.toLowerCase()}`"
           >
             <span class="detail-page__log-ts font-display">{{ line.timestamp.replace('T', ' ').slice(0, 19) }}</span>
-            <span class="detail-page__log-msg">{{ line.message }}</span>
+            <span class="detail-page__log-level font-display" :class="`detail-page__log-level--${line.level.toLowerCase()}`">{{ line.level }}</span>
+            <span class="detail-page__log-msg">
+              {{ line.message }}
+              <span v-if="line.extra" class="detail-page__log-extra">{{ line.extra }}</span>
+            </span>
           </div>
           <div v-if="filteredLogs.length === 0" class="detail-page__empty-text">
             {{ logSearch ? 'Aucun résultat.' : 'Aucun log disponible.' }}
@@ -684,9 +720,27 @@ onMounted(async () => {
   flex-direction: column;
   gap: 3px;
 }
-.detail-page__log-line { display: flex; gap: 12px; align-items: flex-start; }
-.detail-page__log-ts { color: rgba(255, 255, 255, 0.25); white-space: nowrap; font-size: 10px; }
-.detail-page__log-msg { color: rgba(255, 255, 255, 0.7); word-break: break-all; }
+.detail-page__log-line { display: flex; gap: 10px; align-items: baseline; }
+.detail-page__log-ts { color: rgba(255, 255, 255, 0.25); white-space: nowrap; font-size: 10px; flex-shrink: 0; }
+.detail-page__log-level {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
+}
+.detail-page__log-level--info  { color: rgba(52, 211, 153, 0.7); }
+.detail-page__log-level--warn  { color: rgba(251, 191, 36, 0.85); }
+.detail-page__log-level--error { color: rgba(239, 68, 68, 0.9); }
+.detail-page__log-level--fatal { color: rgba(168, 85, 247, 0.9); }
+.detail-page__log-level--debug { color: rgba(96, 165, 250, 0.6); }
+.detail-page__log-level--trace { color: rgba(255, 255, 255, 0.2); }
+.detail-page__log-msg { color: rgba(255, 255, 255, 0.7); word-break: break-word; flex: 1; }
+.detail-page__log-line--error .detail-page__log-msg { color: rgba(252, 165, 165, 0.85); }
+.detail-page__log-line--warn  .detail-page__log-msg { color: rgba(253, 224, 71, 0.75); }
+.detail-page__log-extra { display: block; font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
 .detail-page__empty-text {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.25);
