@@ -103,10 +103,10 @@ onUnmounted(() => {
 
 <template>
   <div class="line-chart">
-    <div v-if="loading" class="line-chart__loading">
+    <div v-show="loading" class="line-chart__loading">
       <div class="line-chart__spinner" />
     </div>
-    <canvas v-else ref="canvasRef" />
+    <canvas v-show="!loading" ref="canvasRef" />
   </div>
 </template>
 
