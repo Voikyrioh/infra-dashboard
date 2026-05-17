@@ -10,23 +10,6 @@ export interface VisitsData {
 	topApps: TopApp[]
 }
 
-interface LokiResponse {
-	status: string
-	data: {
-		resultType: string
-		result: Array<{
-			metric: Record<string, string>
-			value: [number | string, string]
-		}>
-	}
-}
-
-export function parseLokiTopApps(response: LokiResponse): TopApp[] {
-	return response.data.result.map((r) => ({
-		name: r.metric.app ?? 'unknown',
-		visits: Math.max(0, parseInt(r.value[1], 10) || 0),
-	}))
-}
 
 let visitsCache: { data: VisitsData; expiresAt: number } | null = null
 const CACHE_TTL_MS = 5 * 60 * 1000
@@ -74,18 +57,50 @@ export async function fetchGlobalVisits(): Promise<number | null> {
 }
 
 export async function fetchTopApps(): Promise<TopApp[]> {
-	const lokiUrl = Config.Server.LokiUrl
-	if (!lokiUrl) return []
+	const token = Config.Server.CfApiToken
+	const zoneId = Config.Server.CfZoneId
+	if (!token || !zoneId) return []
+
+	const now = new Date()
+	const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
+	const until = now.toISOString()
+
+	const query = `{
+    viewer {
+      zones(filter: { zoneTag: "${zoneId}" }) {
+        httpRequestsAdaptiveGroups(
+          limit: 5
+          filter: { datetime_geq: "${since}", datetime_leq: "${until}" }
+          orderBy: [count_DESC]
+        ) {
+          count
+          dimensions {
+            clientRequestHTTPHost
+          }
+        }
+      }
+    }
+  }`
 
 	try {
-		const query = encodeURIComponent(
-			`topk(3, sum by (app) (count_over_time({job="traefik"}[24h])))`,
-		)
-		const res = await fetch(`${lokiUrl}/loki/api/v1/query?query=${query}`)
+		const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ query }),
+		})
 		if (!res.ok) return []
 
-		const data: LokiResponse = await res.json()
-		return parseLokiTopApps(data)
+		const data = await res.json()
+		const groups: { count: number; dimensions: { clientRequestHTTPHost: string } }[] =
+			data?.data?.viewer?.zones?.[0]?.httpRequestsAdaptiveGroups ?? []
+
+		return groups.map((g) => ({
+			name: g.dimensions.clientRequestHTTPHost,
+			visits: g.count,
+		}))
 	} catch {
 		return []
 	}
