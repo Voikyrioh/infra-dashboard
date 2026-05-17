@@ -420,10 +420,7 @@ onMounted(async () => {
           >
             <span class="detail-page__log-ts font-display">{{ line.timestamp.replace('T', ' ').slice(0, 19) }}</span>
             <span class="detail-page__log-level font-display" :class="`detail-page__log-level--${line.level.toLowerCase()}`">{{ line.level }}</span>
-            <span class="detail-page__log-msg">
-              {{ line.message }}
-              <span v-if="line.extra" class="detail-page__log-extra">{{ line.extra }}</span>
-            </span>
+            <span class="detail-page__log-msg">{{ line.message }}</span>
           </div>
           <div v-if="filteredLogs.length === 0" class="detail-page__empty-text">
             {{ logSearch ? 'Aucun résultat.' : 'Aucun log disponible.' }}
