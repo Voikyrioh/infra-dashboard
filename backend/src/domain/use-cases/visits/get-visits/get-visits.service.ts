@@ -36,15 +36,38 @@ export async function fetchGlobalVisits(): Promise<number | null> {
 	const zoneId = Config.Server.CfZoneId
 	if (!token || !zoneId) return null
 
+	const now = new Date()
+	const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
+	const until = now.toISOString()
+
+	const query = `{
+    viewer {
+      zones(filter: { zoneTag: "${zoneId}" }) {
+        httpRequests1hGroups(
+          limit: 25
+          filter: { datetime_geq: "${since}", datetime_leq: "${until}" }
+        ) {
+          sum { requests }
+        }
+      }
+    }
+  }`
+
 	try {
-		const res = await fetch(
-			`https://api.cloudflare.com/client/v4/zones/${zoneId}/analytics/dashboard?since=-1440&until=0`,
-			{ headers: { Authorization: `Bearer ${token}` } },
-		)
+		const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ query }),
+		})
 		if (!res.ok) return null
 
 		const data = await res.json()
-		return data?.result?.totals?.uniques?.all ?? null
+		const groups = data?.data?.viewer?.zones?.[0]?.httpRequests1hGroups ?? []
+		const total = groups.reduce((sum: number, g: { sum: { requests: number } }) => sum + g.sum.requests, 0)
+		return total > 0 ? total : null
 	} catch {
 		return null
 	}
