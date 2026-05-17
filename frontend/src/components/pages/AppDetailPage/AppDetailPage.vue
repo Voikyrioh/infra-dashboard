@@ -74,11 +74,12 @@ function parsePinoLog(line: LogLine): ParsedLog {
         levelNum >= 40 ? "WARN" :
         levelNum >= 20 ? "DEBUG" : "INFO";
       const ts = time ? new Date(Number(time)).toISOString() : line.timestamp;
-      const extraEntries = Object.entries(rest).filter(([, v]) => typeof v !== "object" || v === null);
-      const extra = extraEntries.length > 0
-        ? extraEntries.map(([k, v]) => `${k}=${String(v)}`).join("  ")
-        : null;
-      return { timestamp: ts, level: levelName, levelNum, message: String(msg), extra };
+      const errObj = rest.err as Record<string, unknown> | undefined;
+      const stack = errObj?.stack ? String(errObj.stack) : null;
+      const fullMessage = stack && !String(msg).includes(stack)
+        ? `${String(msg)}\n${stack}`
+        : String(msg);
+      return { timestamp: ts, level: levelName, levelNum, message: fullMessage, extra: null };
     }
   } catch {}
   return { timestamp: line.timestamp, level: "INFO", levelNum: 30, message: line.message, extra: null };
@@ -420,7 +421,7 @@ onMounted(async () => {
           >
             <span class="detail-page__log-ts font-display">{{ line.timestamp.replace('T', ' ').slice(0, 19) }}</span>
             <span class="detail-page__log-level font-display" :class="`detail-page__log-level--${line.level.toLowerCase()}`">{{ line.level }}</span>
-            <span class="detail-page__log-msg">{{ line.message }}</span>
+            <span class="detail-page__log-msg" :class="{ 'detail-page__log-msg--stack': line.levelNum >= 50 }">{{ line.message }}</span>
           </div>
           <div v-if="filteredLogs.length === 0" class="detail-page__empty-text">
             {{ logSearch ? 'Aucun résultat.' : 'Aucun log disponible.' }}
@@ -737,7 +738,7 @@ onMounted(async () => {
 .detail-page__log-msg { color: rgba(255, 255, 255, 0.7); word-break: break-word; flex: 1; }
 .detail-page__log-line--error .detail-page__log-msg { color: rgba(252, 165, 165, 0.85); }
 .detail-page__log-line--warn  .detail-page__log-msg { color: rgba(253, 224, 71, 0.75); }
-.detail-page__log-extra { display: block; font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+.detail-page__log-msg--stack { white-space: pre-wrap; font-size: 10px; }
 .detail-page__empty-text {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.25);
