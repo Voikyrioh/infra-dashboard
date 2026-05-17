@@ -6,12 +6,14 @@ import {
   LineElement,
   PointElement,
   LinearScale,
+  CategoryScale,
+  Legend,
   Tooltip,
   Filler,
 } from "chart.js";
 import type { DataPoint } from "@/services/metrics.service";
 
-Chart.register(LineController, LineElement, PointElement, LinearScale, Tooltip, Filler);
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip, Filler);
 
 const props = defineProps<{
   cpuData: DataPoint[];
