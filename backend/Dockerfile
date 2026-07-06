@@ -37,4 +37,6 @@ COPY --from=builder database.json .
 # 🔌 Expose the listening port of your app
 EXPOSE $PORT
 
-CMD ["node", "./index.js"]
+# --import hook : loader ESM OTel — sans lui les deps CJS (pg…) échappent au
+# patch et aucun span DB n'est émis (cf. CHANGELOG observability 0.3.0).
+CMD ["node", "--import", "@Voikyrioh/observability/hook", "./index.js"]
