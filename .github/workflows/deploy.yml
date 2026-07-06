@@ -71,14 +71,30 @@ jobs:
           echo "=== .env généré (clés uniquement) ==="
           cut -d= -f1 .env
 
-      - name: Copy .env to VPS
+      # Fiche custom_compose : provision-app ne crée ni le dossier ni le compose
+      # sur le VPS — ce workflow est autoporteur. Les clés JWT sont générées une
+      # fois (les régénérer invaliderait les sessions en cours).
+      - name: Préparer le dossier app sur le VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            mkdir -p /opt/infra/apps/dashboard/ssl
+            if [ ! -f /opt/infra/apps/dashboard/ssl/id_rsa ]; then
+              ssh-keygen -t rsa -b 4096 -m PEM -N "" -f /opt/infra/apps/dashboard/ssl/id_rsa
+            fi
+
+      - name: Copy .env + docker-compose.yml to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: ".env"
+          source: ".env,docker-compose.yml"
           target: /opt/infra/apps/dashboard/
 
       - name: Deploy on VPS

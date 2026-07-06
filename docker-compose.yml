@@ -22,7 +22,7 @@ services:
       - LOG_FILE=/data/logs/app.log
     volumes:
       - dashboard-data:/data
-      - /opt/dashboard/ssl:/data/ssl:ro
+      - /opt/infra/apps/dashboard/ssl:/data/ssl:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - dashboard
