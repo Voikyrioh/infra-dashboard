@@ -23,6 +23,8 @@ services:
       # fichier dans le volume les rendrait invisibles (et /data/logs n'existe
       # pas dans un volume neuf → crash pino au boot).
       - LOG_FILE=/dev/stdout
+      # Traces SigNoz (INFRA-16) via le réseau docker `signoz`
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://signoz-otel-collector:4318
     volumes:
       - dashboard-data:/data
       - /opt/infra/apps/dashboard/ssl:/data/ssl:ro
@@ -30,6 +32,7 @@ services:
     networks:
       - dashboard
       - postgres
+      - signoz
 
   dashboard-ui:
     image: ghcr.io/voikyrioh/dashboard-frontend:${IMAGE_TAG:-latest}
@@ -55,6 +58,9 @@ networks:
   proxy:
     external: true
   postgres:
+    external: true
+  # Réseau d'ingestion OTLP du stack SigNoz (jamais public)
+  signoz:
     external: true
 
 volumes:

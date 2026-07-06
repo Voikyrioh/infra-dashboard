@@ -1,3 +1,5 @@
+// ⚠️ Premier import : patch OTel avant tout module applicatif (pg/http/fetch)
+import './instrumentation'
 import process from 'node:process'
 import config from '@config'
 import { type ServerType, serve } from '@hono/node-server'

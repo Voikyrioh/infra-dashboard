@@ -33,6 +33,9 @@ jobs:
           tags: |
             ghcr.io/voikyrioh/dashboard-api:${{ steps.sha.outputs.tag }}
             ghcr.io/voikyrioh/dashboard-api:latest
+          # @Voikyrioh/observability (GitHub Packages) : NPM_TOKEN = PAT read:packages
+          build-args: |
+            GITHUB_TOKEN=${{ secrets.NPM_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Build and push dashboard-frontend
         uses: docker/build-push-action@v5
