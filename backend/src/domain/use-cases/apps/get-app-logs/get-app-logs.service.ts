@@ -49,69 +49,65 @@ export async function fetchLokiLogs(containerName: string, limit = 200): Promise
   }
 }
 
-export async function fetchDockerFileLogs(
-  containerName: string,
-  logFile: string,
-  limit = 200,
-): Promise<LogLine[]> {
+// Le stream /containers/:id/logs est multiplexé (frames [type,0,0,0,size u32BE])
+// sauf si le conteneur tourne en TTY (texte brut). timestamps=true préfixe
+// chaque ligne d'un RFC3339 nano.
+export function parseDockerLogs(raw: Buffer): LogLine[] {
+  let text = ''
+  const isMultiplexed =
+    raw.length >= 8 && raw[0]! <= 2 && raw[1] === 0 && raw[2] === 0 && raw[3] === 0
+  if (isMultiplexed) {
+    let offset = 0
+    while (offset + 8 <= raw.length) {
+      const size = raw.readUInt32BE(offset + 4)
+      text += raw.subarray(offset + 8, offset + 8 + size).toString('utf-8')
+      offset += 8 + size
+    }
+  } else {
+    text = raw.toString('utf-8')
+  }
+
+  return text
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const spaceIdx = line.indexOf(' ')
+      const ts = spaceIdx > 0 ? Date.parse(line.slice(0, spaceIdx)) : Number.NaN
+      const hasTimestamp = !Number.isNaN(ts)
+      return {
+        timestamp: hasTimestamp ? new Date(ts).toISOString() : new Date().toISOString(),
+        message: hasTimestamp ? line.slice(spaceIdx + 1) : line,
+        source: 'file' as const,
+      }
+    })
+}
+
+// Sortie stdout/stderr du conteneur via l'API Docker (équivalent `docker logs`).
+// Remplace l'ancien `tail` du LOG_FILE : toutes les apps loggent vers /dev/stdout.
+export async function fetchContainerLogs(containerName: string, limit = 200): Promise<LogLine[]> {
   const socketPath = Config.Server.DockerSocket
 
   return new Promise((resolve) => {
-    const execBody = JSON.stringify({
-      AttachStdout: true,
-      AttachStderr: true,
-      Cmd: ['tail', '-n', String(limit), logFile],
-    })
-
-    const createReq = http.request(
+    const req = http.request(
       {
         socketPath,
-        path: `/containers/${containerName}/exec`,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Content-Length': execBody.length },
+        path: `/containers/${containerName}/logs?stdout=true&stderr=true&timestamps=true&tail=${limit}`,
+        method: 'GET',
       },
       (res: any) => {
         const chunks: Buffer[] = []
         res.on('data', (c: Buffer) => chunks.push(c))
         res.on('end', () => {
+          if (res.statusCode !== 200) return resolve([])
           try {
-            const { Id } = JSON.parse(Buffer.concat(chunks).toString())
-            const startBody = JSON.stringify({ Detach: false, Tty: false })
-            const startReq = http.request(
-              {
-                socketPath,
-                path: `/exec/${Id}/start`,
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Content-Length': startBody.length },
-              },
-              (sRes: any) => {
-                const sChunks: Buffer[] = []
-                sRes.on('data', (c: Buffer) => sChunks.push(c))
-                sRes.on('end', () => {
-                  const raw = Buffer.concat(sChunks).toString('utf-8')
-                  const lines = raw
-                    .split('\n')
-                    .filter(Boolean)
-                    .map((line) => ({
-                      timestamp: new Date().toISOString(),
-                      message: line,
-                      source: 'file' as const,
-                    }))
-                  resolve(lines)
-                })
-              },
-            )
-            startReq.on('error', () => resolve([]))
-            startReq.write(startBody)
-            startReq.end()
+            resolve(parseDockerLogs(Buffer.concat(chunks)))
           } catch {
             resolve([])
           }
         })
       },
     )
-    createReq.on('error', () => resolve([]))
-    createReq.write(execBody)
-    createReq.end()
+    req.on('error', () => resolve([]))
+    req.end()
   })
 }
