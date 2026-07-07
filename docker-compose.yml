@@ -14,6 +14,13 @@ services:
       - INIT_PASSWORD=${INIT_PASSWORD}
       - CLIENT_URLS=https://dashboard.voikyrioh.fr
       - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_OWNER=voikyrioh
+      - GITHUB_REPO=infra-dashboard
+      # Visites CF + webhooks GitHub : valeurs seedées Vault → .env par deploy.yml,
+      # à forwarder explicitement (pas d'env_file : .env contient trop de creds).
+      - CF_API_TOKEN=${CF_API_TOKEN}
+      - CF_ZONE_ID=${CF_ZONE_ID}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
       - PG_HOST=shared_postgres
       - PG_PORT=5432
       - PG_USER=${PG_USER}
