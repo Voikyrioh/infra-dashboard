@@ -145,7 +145,7 @@ export async function updateAppInfraConfig(
 
 export async function fetchAppLogs(
   id: string,
-  source: "loki" | "file" = "loki",
+  source: "loki" | "file" = "file",
   limit = 200,
 ): Promise<LogLine[]> {
   const res = await fetch(`/api/v1/apps/${id}/logs?source=${source}&limit=${limit}`);

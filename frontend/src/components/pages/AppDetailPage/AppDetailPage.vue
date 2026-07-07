@@ -33,7 +33,9 @@ const stats = ref<AppStats | null>(null);
 const infraConfig = ref<InfraConfig | null>(null);
 const versions = ref<string[]>([]);
 const logs = ref<LogLine[]>([]);
-const logSource = ref<"loki" | "file">("loki");
+// "file" = docker logs (stdout) via l'API backend. "loki" désactivé depuis le
+// retrait de Loki (INFRA-21), onglet réintroduit au branchement SigNoz (INFRA-22).
+const logSource = ref<"loki" | "file">("file");
 const logSearch = ref("");
 const autoRefreshLogs = ref(false);
 let logRefreshInterval: ReturnType<typeof setInterval> | null = null;
@@ -390,15 +392,9 @@ onMounted(async () => {
           <div class="detail-page__logs-controls">
             <button
               class="detail-page__log-tab"
-              :class="{ 'detail-page__log-tab--active': logSource === 'loki' }"
-              @click="switchLogSource('loki')"
-            >Stdout</button>
-            <button
-              v-if="infraConfig?.logFile"
-              class="detail-page__log-tab"
               :class="{ 'detail-page__log-tab--active': logSource === 'file' }"
               @click="switchLogSource('file')"
-            >Fichier</button>
+            >Stdout</button>
             <button
               class="detail-page__log-refresh"
               :class="{ 'detail-page__log-refresh--active': autoRefreshLogs }"

@@ -19,7 +19,7 @@ import {
 	fetchInfraConfig,
 	commitInfraConfig,
 } from '../../domain/use-cases/apps/get-infra-config/get-infra-config.service'
-import { fetchLokiLogs, fetchDockerFileLogs } from '../../domain/use-cases/apps/get-app-logs/get-app-logs.service'
+import { fetchLokiLogs, fetchContainerLogs } from '../../domain/use-cases/apps/get-app-logs/get-app-logs.service'
 import { AppError } from '@errors/app.error'
 import { repository } from '../../data/repository/factory'
 
@@ -119,20 +119,19 @@ appsRoute.put(
 
 appsRoute.get('/:id/logs', async (c) => {
 	const { id } = c.req.param()
-	const source = c.req.query('source') ?? 'loki'
+	// Défaut = docker logs (stdout). Loki retiré (INFRA-21), la source reste
+	// acceptée en attendant le rebranchement SigNoz (INFRA-22).
+	const source = c.req.query('source') ?? 'file'
 	const limit = Math.min(parseInt(c.req.query('limit') ?? '200', 10), 500)
 	const app = await GetApp.Execute(id)
 	if (!app.containerName) return c.json([])
 
-	if (source === 'file') {
-		const infraConfig = app.appName ? await fetchInfraConfig(app.appName).catch(() => null) : null
-		const logFile = infraConfig?.logFile ?? null
-		if (!logFile) return c.json([])
-		const logs = await fetchDockerFileLogs(app.containerName, logFile, limit)
+	if (source === 'loki') {
+		const logs = await fetchLokiLogs(app.containerName, limit)
 		return c.json(logs)
 	}
 
-	const logs = await fetchLokiLogs(app.containerName, limit)
+	const logs = await fetchContainerLogs(app.containerName, limit)
 	return c.json(logs)
 })
 
