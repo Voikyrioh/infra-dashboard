@@ -59,7 +59,10 @@ async function querySignoz(query: string, range: HistoryRange): Promise<DataPoin
 
 export async function fetchHistory(range: HistoryRange): Promise<HistoryMetrics> {
 	const CPU_QUERY = `100 * (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m])))`
-	const RAM_QUERY = `(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / 1048576`
+	// sum() obligatoire : SigNoz colle des labels internes (__scope.name__,
+	// __temporality__…) aux séries prometheus → le vector matching de la
+	// soustraction brute ne matche jamais (result vide, constaté live).
+	const RAM_QUERY = `(sum(node_memory_MemTotal_bytes) - sum(node_memory_MemAvailable_bytes)) / 1048576`
 
 	const [cpu, ram] = await Promise.all([
 		querySignoz(CPU_QUERY, range),
