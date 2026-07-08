@@ -12,10 +12,20 @@ describe('VersionSelect', () => {
     expect(wrapper.find('input').element.value).toBe('v0.1.1')
   })
 
-  it('affiche "Déployer" quand la sélection === version déployée', () => {
+  it('affiche "Déployée" et désactive le bouton quand la sélection === version déployée', () => {
     const wrapper = mount(VersionSelect, {
       props: { versions, deployedVersion: 'v0.1.1', disabled: false },
     })
+    expect(wrapper.find('button').text()).toContain('Déployée')
+    expect(wrapper.find('button').attributes('disabled')).toBeDefined()
+  })
+
+  it('affiche "Déployer" quand la sélection est plus récente que la déployée', async () => {
+    const wrapper = mount(VersionSelect, {
+      props: { versions, deployedVersion: 'v0.1.1', disabled: false },
+    })
+    await wrapper.find('input').setValue('v0.2.0')
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('button').text()).toContain('Déployer')
   })
 
@@ -35,9 +45,11 @@ describe('VersionSelect', () => {
     const wrapper = mount(VersionSelect, {
       props: { versions, deployedVersion: 'v0.1.1', disabled: false },
     })
+    await wrapper.find('input').setValue('v0.2.0')
+    await wrapper.vm.$nextTick()
     await wrapper.find('button').trigger('click')
     expect(wrapper.emitted('deploy')).toBeTruthy()
-    expect(wrapper.emitted('deploy')![0]).toEqual(['v0.1.1'])
+    expect(wrapper.emitted('deploy')![0]).toEqual(['v0.2.0'])
   })
 
   it('filtre les versions quand on tape dans l\'input', async () => {
