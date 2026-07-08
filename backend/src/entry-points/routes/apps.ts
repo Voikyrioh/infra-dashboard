@@ -19,7 +19,7 @@ import {
 	fetchInfraConfig,
 	commitInfraConfig,
 } from '../../domain/use-cases/apps/get-infra-config/get-infra-config.service'
-import { fetchLokiLogs, fetchContainerLogs } from '../../domain/use-cases/apps/get-app-logs/get-app-logs.service'
+import { fetchContainerLogs } from '../../domain/use-cases/apps/get-app-logs/get-app-logs.service'
 import { AppError } from '@errors/app.error'
 import { repository } from '../../data/repository/factory'
 
@@ -119,17 +119,11 @@ appsRoute.put(
 
 appsRoute.get('/:id/logs', async (c) => {
 	const { id } = c.req.param()
-	// Défaut = docker logs (stdout). Loki retiré (INFRA-21), la source reste
-	// acceptée en attendant le rebranchement SigNoz (INFRA-22).
-	const source = c.req.query('source') ?? 'file'
+	// Source unique = docker logs (stdout). Le paramètre `source` est ignoré
+	// depuis le retrait de Loki (INFRA-21/22).
 	const limit = Math.min(parseInt(c.req.query('limit') ?? '200', 10), 500)
 	const app = await GetApp.Execute(id)
 	if (!app.containerName) return c.json([])
-
-	if (source === 'loki') {
-		const logs = await fetchLokiLogs(app.containerName, limit)
-		return c.json(logs)
-	}
 
 	const logs = await fetchContainerLogs(app.containerName, limit)
 	return c.json(logs)

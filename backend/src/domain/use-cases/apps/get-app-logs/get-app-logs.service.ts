@@ -4,49 +4,7 @@ import Config from '@config'
 export interface LogLine {
   timestamp: string
   message: string
-  source: 'loki' | 'file'
-}
-
-interface LokiQueryResponse {
-  status: string
-  data: {
-    resultType: string
-    result: Array<{
-      stream: Record<string, string>
-      values: [string, string][]
-    }>
-  }
-}
-
-export async function fetchLokiLogs(containerName: string, limit = 200): Promise<LogLine[]> {
-  const lokiUrl = Config.Server.LokiUrl
-  if (!lokiUrl) return []
-
-  try {
-    const query = encodeURIComponent(`{job="docker"} |= \`${containerName}\``)
-    const res = await fetch(
-      `${lokiUrl}/loki/api/v1/query_range?query=${query}&limit=${limit}&direction=backward`,
-    )
-    if (!res.ok) return []
-
-    const data: LokiQueryResponse = await res.json()
-    const lines: LogLine[] = []
-
-    for (const stream of data.data.result) {
-      for (const [ns, msg] of stream.values) {
-        const ms = Math.floor(Number(ns) / 1_000_000)
-        lines.push({
-          timestamp: new Date(ms).toISOString(),
-          message: msg,
-          source: 'loki',
-        })
-      }
-    }
-
-    return lines.sort((a, b) => a.timestamp.localeCompare(b.timestamp))
-  } catch {
-    return []
-  }
+  source: 'file'
 }
 
 // Le stream /containers/:id/logs est multiplexé (frames [type,0,0,0,size u32BE])
