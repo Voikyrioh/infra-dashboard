@@ -32,6 +32,12 @@ services:
       - LOG_FILE=/dev/stdout
       # Traces SigNoz (INFRA-16) via le réseau docker `signoz`
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://signoz-otel-collector:4318
+      # Requis par le preload /register (observability 0.4.0)
+      - OTEL_SERVICE_NAME=dashboard-api
+      # Historique métriques CPU/RAM (INFRA-22) : API query-service SigNoz,
+      # même réseau `signoz`. Clé API seedée Vault → .env par deploy.yml.
+      - SIGNOZ_API_URL=http://signoz:8080
+      - SIGNOZ_API_KEY=${SIGNOZ_API_KEY}
     volumes:
       - dashboard-data:/data
       - /opt/infra/apps/dashboard/ssl:/data/ssl:ro

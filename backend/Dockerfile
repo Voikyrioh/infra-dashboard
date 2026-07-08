@@ -37,6 +37,8 @@ COPY --from=builder database.json .
 # 🔌 Expose the listening port of your app
 EXPOSE $PORT
 
-# --import hook : loader ESM OTel — sans lui les deps CJS (pg…) échappent au
-# patch et aucun span DB n'est émis (cf. CHANGELOG observability 0.3.0).
-CMD ["node", "--import", "@Voikyrioh/observability/hook", "./index.js"]
+# --import register : hook ESM + init SDK dans le preload, AVANT le linking
+# du bundle — l'init in-app arrivait trop tard pour patcher les imports
+# statiques (cf. CHANGELOG observability 0.4.0). OTEL_SERVICE_NAME requis
+# (compose custom), l'init in-app devient un no-op.
+CMD ["node", "--import", "@Voikyrioh/observability/register", "./index.js"]
