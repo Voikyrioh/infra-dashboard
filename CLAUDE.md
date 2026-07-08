@@ -54,6 +54,8 @@ npm run dev --workspace=frontend
 | `JWT_EXPIRATION_TIME_MS` | Durée du token en ms           | `3600000` (1h)  |
 | `PORT`                | Port du serveur                    | `3000`          |
 | `PG_HOST/USER/PASSWORD/DATABASE` | Postgres      | `localhost/user/password/dashboard` |
-| `GITHUB_TOKEN`       | PAT GitHub pour la détection d'apps | —               |
+| `GITHUB_TOKEN`       | PAT GitHub **classic** (`repo` + `read:packages`) pour détection d'apps, versions GHCR, deploys | — |
 | `GITHUB_OWNER`       | Username GitHub de l'owner         | `voikyrioh`     |
 | `GITHUB_REPO`        | Nom du repo dashboard (pour la détection) | `dashboard` |
+| `SIGNOZ_API_URL`     | Base URL query-service SigNoz (historique métriques) | — (`http://signoz:8080` en prod) |
+| `SIGNOZ_API_KEY`     | Clé API SigNoz (Settings → API Keys, rôle Viewer) | — |
