@@ -93,13 +93,21 @@ export default {
 		},
 		validator: z.string().min(1),
 	},
-	VictoriaMetricsUrl: {
-		name: 'VICTORIA_METRICS_URL',
-		description: 'Victoria Metrics base URL',
+	SignozApiUrl: {
+		name: 'SIGNOZ_API_URL',
+		description: 'SigNoz query-service base URL (ex: http://signoz:8080)',
 		default: {
 			_: null,
 		},
 		validator: z.string().url().nullish().default(null),
+	},
+	SignozApiKey: {
+		name: 'SIGNOZ_API_KEY',
+		description: 'SigNoz API key (Settings → API Keys, rôle Viewer suffit)',
+		default: {
+			_: null,
+		},
+		validator: z.string().nullish().default(null),
 	},
 	CfApiToken: {
 		name: 'CF_API_TOKEN',
@@ -116,14 +124,6 @@ export default {
 			_: null,
 		},
 		validator: z.string().nullish().default(null),
-	},
-	LokiUrl: {
-		name: 'LOKI_URL',
-		description: 'Loki base URL',
-		default: {
-			_: null,
-		},
-		validator: z.string().url().nullish().default(null),
 	},
 	GitHubToken: {
 		name: 'GITHUB_TOKEN',

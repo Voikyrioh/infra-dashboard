@@ -16,13 +16,15 @@ export default {
 			JwtExpiresMs: number
 			InitPassword: string
 			DockerSocket: string
-			VictoriaMetricsUrl: string | null
+			SignozApiUrl: string | null
+			SignozApiKey: string | null
 			CfApiToken: string | null
 			CfZoneId: string | null
-			LokiUrl: string | null
 			GitHubToken: string | null
 			GitHubOwner: string
 			GitHubRepo: string
+			GitHubInfraRepo: string
+			GitHubWebhookSecret: string | null
 			RpId: string
 		}
 	>(ServerConfig),
