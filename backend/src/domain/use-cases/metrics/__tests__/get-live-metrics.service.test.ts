@@ -20,11 +20,11 @@ const makeStats = (cpuDelta: number, systemDelta: number, numCpus: number, usage
 
 describe('get-live-metrics service', () => {
 	describe('calcCpuPercent', () => {
-		it('calcule le pourcentage CPU correctement', () => {
-			// 1/4 du système avec 4 CPUs = 100%
+		it('calcule le pourcentage machine (pas la formule docker-stats par cœur)', () => {
+			// 1/4 du temps système total = 25 % de la machine, peu importe les cœurs
 			const stats = makeStats(1000, 4000, 4, 0, 0)
 			const result = calcCpuPercent(stats as any)
-			expect(result).to.be.closeTo(100, 0.1)
+			expect(result).to.be.closeTo(25, 0.1)
 		})
 
 		it('retourne 0 si systemDelta est 0', () => {

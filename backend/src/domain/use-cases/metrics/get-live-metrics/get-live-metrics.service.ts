@@ -51,15 +51,17 @@ function dockerGet<T>(socketPath: string, path: string): Promise<T> {
 	})
 }
 
+// % de la MACHINE entière (system_cpu_usage agrège déjà tous les cœurs) —
+// PAS la formule docker-stats (×online_cpus, 100 % = 1 cœur) : sommée sur
+// tous les conteneurs elle saturait la jauge à 100 % (bug constaté, host à ~14 %).
 export function calcCpuPercent(stats: DockerContainerStats): number {
 	const cpuDelta =
 		stats.cpu_stats.cpu_usage.total_usage -
 		stats.precpu_stats.cpu_usage.total_usage
 	const systemDelta =
 		stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage
-	const numCpus = stats.cpu_stats.online_cpus ?? 1
 	if (systemDelta <= 0 || cpuDelta < 0) return 0
-	return (cpuDelta / systemDelta) * numCpus * 100
+	return (cpuDelta / systemDelta) * 100
 }
 
 export function calcRamMb(stats: DockerContainerStats): number {
