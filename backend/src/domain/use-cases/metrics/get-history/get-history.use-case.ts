@@ -3,7 +3,7 @@ import { type HistoryMetrics, type HistoryRange, fetchHistory } from './get-hist
 
 class GetHistoryUseCase extends UseCase<HistoryMetrics> {
 	async Execute(range: HistoryRange) {
-		return this.runStep('Fetch Victoria Metrics history', fetchHistory.bind(this, range))
+		return this.runStep('Fetch SigNoz metrics history', fetchHistory.bind(this, range))
 	}
 }
 

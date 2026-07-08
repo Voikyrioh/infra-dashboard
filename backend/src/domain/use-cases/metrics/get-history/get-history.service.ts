@@ -12,12 +12,14 @@ export interface HistoryMetrics {
 	ram: DataPoint[]
 }
 
-interface VictoriaResponse {
+// GET /api/v1/query_range SigNoz = format Prometheus (status/data/result/values),
+// identique à l'ancien Victoria Metrics.
+interface PromRangeResponse {
 	status: string
 	data: { resultType: string; result: { metric: object; values: [number, string][] }[] }
 }
 
-export function parseVictoriaResponse(response: VictoriaResponse): DataPoint[] {
+export function parsePromResponse(response: PromRangeResponse): DataPoint[] {
 	const result = response.data.result[0]
 	if (!result) return []
 	return result.values.map(([t, v]) => ({ t, v: parseFloat(v) }))
@@ -29,9 +31,10 @@ const RANGE_PARAMS: Record<HistoryRange, { step: string; offsetSeconds: number }
 	'7d':  { step: '1h',   offsetSeconds: 604800 },
 }
 
-async function queryVictoria(query: string, range: HistoryRange): Promise<DataPoint[]> {
-	const baseUrl = Config.Server.VictoriaMetricsUrl
-	if (!baseUrl) return []
+async function querySignoz(query: string, range: HistoryRange): Promise<DataPoint[]> {
+	const baseUrl = Config.Server.SignozApiUrl
+	const apiKey = Config.Server.SignozApiKey
+	if (!baseUrl || !apiKey) return []
 
 	const now = Math.floor(Date.now() / 1000)
 	const { step, offsetSeconds } = RANGE_PARAMS[range]
@@ -42,10 +45,16 @@ async function queryVictoria(query: string, range: HistoryRange): Promise<DataPo
 		step,
 	})
 
-	const res = await fetch(`${baseUrl}/api/v1/query_range?${params}`)
-	if (!res.ok) return []
-	const data: VictoriaResponse = await res.json()
-	return parseVictoriaResponse(data)
+	try {
+		const res = await fetch(`${baseUrl}/api/v1/query_range?${params}`, {
+			headers: { 'SIGNOZ-API-KEY': apiKey },
+		})
+		if (!res.ok) return []
+		const data: PromRangeResponse = await res.json()
+		return parsePromResponse(data)
+	} catch {
+		return []
+	}
 }
 
 export async function fetchHistory(range: HistoryRange): Promise<HistoryMetrics> {
@@ -53,8 +62,8 @@ export async function fetchHistory(range: HistoryRange): Promise<HistoryMetrics>
 	const RAM_QUERY = `(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / 1048576`
 
 	const [cpu, ram] = await Promise.all([
-		queryVictoria(CPU_QUERY, range),
-		queryVictoria(RAM_QUERY, range),
+		querySignoz(CPU_QUERY, range),
+		querySignoz(RAM_QUERY, range),
 	])
 	return { cpu, ram }
 }
