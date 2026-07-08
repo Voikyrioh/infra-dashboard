@@ -33,9 +33,7 @@ const stats = ref<AppStats | null>(null);
 const infraConfig = ref<InfraConfig | null>(null);
 const versions = ref<string[]>([]);
 const logs = ref<LogLine[]>([]);
-// "file" = docker logs (stdout) via l'API backend. "loki" désactivé depuis le
-// retrait de Loki (INFRA-21), onglet réintroduit au branchement SigNoz (INFRA-22).
-const logSource = ref<"loki" | "file">("file");
+// Source unique : docker logs (stdout) via l'API backend (Loki retiré, INFRA-21/22).
 const logSearch = ref("");
 const autoRefreshLogs = ref(false);
 let logRefreshInterval: ReturnType<typeof setInterval> | null = null;
@@ -114,7 +112,7 @@ function initConfigEditor(a: App) {
 
 async function loadLogs() {
   if (!app.value) return;
-  logs.value = await fetchAppLogs(id.value, logSource.value);
+  logs.value = await fetchAppLogs(id.value);
 }
 
 async function saveConfig() {
@@ -201,11 +199,6 @@ function toggleAutoRefreshLogs() {
   } else {
     if (logRefreshInterval) clearInterval(logRefreshInterval);
   }
-}
-
-async function switchLogSource(src: "loki" | "file") {
-  logSource.value = src;
-  await loadLogs();
 }
 
 onUnmounted(() => {
@@ -390,11 +383,7 @@ onMounted(async () => {
         <div class="detail-page__logs-header">
           <div class="detail-page__card-title">Logs</div>
           <div class="detail-page__logs-controls">
-            <button
-              class="detail-page__log-tab"
-              :class="{ 'detail-page__log-tab--active': logSource === 'file' }"
-              @click="switchLogSource('file')"
-            >Stdout</button>
+            <span class="detail-page__log-tab detail-page__log-tab--active">Stdout</span>
             <button
               class="detail-page__log-refresh"
               :class="{ 'detail-page__log-refresh--active': autoRefreshLogs }"

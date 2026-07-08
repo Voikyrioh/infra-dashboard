@@ -111,7 +111,7 @@ export interface InfraConfig {
 export interface LogLine {
   timestamp: string;
   message: string;
-  source: "loki" | "file";
+  source: "file";
 }
 
 export async function fetchApp(id: string): Promise<App> {
@@ -143,12 +143,8 @@ export async function updateAppInfraConfig(
   if (!res.ok && res.status !== 204) throw new Error("Update failed");
 }
 
-export async function fetchAppLogs(
-  id: string,
-  source: "loki" | "file" = "file",
-  limit = 200,
-): Promise<LogLine[]> {
-  const res = await fetch(`/api/v1/apps/${id}/logs?source=${source}&limit=${limit}`);
+export async function fetchAppLogs(id: string, limit = 200): Promise<LogLine[]> {
+  const res = await fetch(`/api/v1/apps/${id}/logs?limit=${limit}`);
   if (!res.ok) return [];
   return res.json();
 }
