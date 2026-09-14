@@ -2,21 +2,14 @@
 
 Dashboard is a single-owner admin tool for infrastructure management. Limited business logic.
 
-## Core constraints
+## Rules by domain
 
-| Rule | Implication |
-|---|---|
-| Single owner only | Account table has max 1 record (id=1); PK unique constraint |
-| No shared access | No user/team/role model; auth = WebAuthn passkey only |
-| Read-only metrics | No manual state changes; Docker Compose is source of truth |
-| App registration (manual + sync) | GitHub sync via Actions; manual entry for non-GitHub apps |
-| Tag system (optional) | Apps can have 0-N tags for filtering and organization |
-| Version immutability | Image tags in GHCR are immutable (Docker best practice) |
-| Logs streaming (live only) | No log persistence; Docker logs buffer last 100 lines |
-
-## Enforcement points
-
-- **auth.repository**: `ensureSingleAccount()` checks account count
-- **apps.repository**: `findAll()` filters by visibility (future: shared teams)
-- **tags.repository**: `findByApp()` LEFT JOIN to handle NULL tags
-- **metrics.route**: `GET /metrics/history` queries SigNoz (no local caching)
+| ID | Domain | Title | File |
+|---|---|---|---|
+| BR-AUTH-001 | Auth | Single owner constraint | [BR-AUTH-001-single-owner.md](./BR-AUTH-001-single-owner.md) |
+| BR-APPS-002 | Apps | Docker image version immutability | [BR-APPS-002-version-immutability.md](./BR-APPS-002-version-immutability.md) |
+| BR-APPS-003 | Apps | Read-only metrics (Docker source) | [BR-APPS-003-read-only-metrics.md](./BR-APPS-003-read-only-metrics.md) |
+| BR-REGISTRY-004 | Registry | App registration (manual + sync) | [BR-REGISTRY-004-app-registration.md](./BR-REGISTRY-004-app-registration.md) |
+| BR-TAGS-005 | Tags | Optional categorization | [BR-TAGS-005-optional-categorization.md](./BR-TAGS-005-optional-categorization.md) |
+| BR-LOGS-006 | Logs | Live-only streaming | [BR-LOGS-006-live-only.md](./BR-LOGS-006-live-only.md) |
+| BR-WEBHOOKS-007 | Webhooks | GitHub deployment events | [BR-WEBHOOKS-007-github-events.md](./BR-WEBHOOKS-007-github-events.md) |
