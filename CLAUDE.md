@@ -1,5 +1,11 @@
 # Dashboard — CLAUDE.md
 
+**Role:** Infrastructure admin dashboard (Docker Compose + Traefik supervision).
+
+**Essential commands:** `cd backend && npm run dev` (API :3000) · `cd frontend && npm run dev` (UI :5173) · `npm test` (all) · Docker Compose for production.
+
+**Setup:** Read [ARCHITECTURE.md](./ARCHITECTURE.md) for system overview, then [docs/INDEX.md](./docs/INDEX.md) for layers. Skills: `code-search`, `dev-task`, `bugfix`, `doc-update`.
+
 ## Contexte projet
 
 Dashboard d'infrastructure pour gérer des déploiements Docker Compose + Traefik.  
